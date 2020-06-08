@@ -1,0 +1,48 @@
+.ufo {
+  height: 30px;
+  width: 40px;
+  position: absolute;
+  top: 50px;
+  margin-left: 100px;
+}
+
+.bullet {
+  height: 10px;
+  width: 2px;
+  position: absolute;
+  bottom: 75px;
+  margin-left: 14px;
+}
+
+.shooter {
+  position: absolute;
+  height: 20px;
+  width: 30px;
+  bottom: 50px;
+}
+
+.shooter-life {
+  position: absolute;
+  height: 20px;
+  width: 30px;
+  bottom: 10px;
+}
+
+.ground {
+  position: absolute;
+  bottom: 40px;
+  width: 90%;
+  left: 5%;
+}
+.mat-divider {
+  border-top-color: green;
+}
+
+.high-score {
+  font-family: Korean Looks;
+  position: absolute;
+  color: green;
+  bottom: 10px;
+  right: 5%;
+  font-weight: bold;
+}
