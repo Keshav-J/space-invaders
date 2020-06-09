@@ -1,14 +1,18 @@
-<img src="assets/game/ufo1.png" alt="ufo1" class="ufo">
+<div id="ufo-container"></div>
 
-<img src="assets/game/bullet.png" alt="bullet" class="bullet">
+<div id="bullet-container"></div>
 
 
-<img src="assets/game/shooter.png" alt="shooter" class="shooter">
+<img *ngIf="shooter" [style.margin-left]="shooterX+'px'" src="assets/game/shooter.png" alt="shooter" class="shooter shooter-active">
 
-<div class="ground">
+<div class="ground" [style.width]="'90%'">
   <mat-divider></mat-divider>
 </div>
 
-<img src="assets/game/shooter.png" alt="shooter" class="shooter-life">
+<div class="shooter-life-dock">
+  <img *ngIf="life>=1" [style.margin-left]="'0px'" src="assets/game/shooter.png" alt="shooter" class="shooter">
+  <img *ngIf="life>=2" [style.margin-left]="'35px'" src="assets/game/shooter.png" alt="shooter" class="shooter">
+  <img *ngIf="life>=3" [style.margin-left]="'70px'" src="assets/game/shooter.png" alt="shooter" class="shooter">
+</div>
 
-<span class="high-score"> HI 00000 </span>
+<span class="high-score"> SCORE {{ score | number: '5.0-0' }} </span>
