@@ -1,5 +1,4 @@
 import { Component, OnInit, HostListener } from '@angular/core';
-import { resetFakeAsyncZone } from '@angular/core/testing';
 
 @Component({
   selector: 'app-game',
@@ -22,7 +21,87 @@ export class GameComponent implements OnInit {
   ufoCnt:number = 0;
   ufos = [];
 
-  reset() {
+
+  ngOnInit() {
+
+    this.startNewGame();
+
+    const incrementBulletHeight = setInterval(() => {
+      if(!this.bullet) return;
+
+      this.bulletY -= this.difficulty;
+
+      if(this.bulletY <= 0) {
+        this.deleteBullet();
+        return;
+      }
+
+      document.getElementById('bullet').style.top = this.bulletY + 'px';
+    }, 10);
+
+    const descrementUfoHeight = setInterval(() => {
+      var temp = [];
+      for(var i=0 ; i<this.ufos.length ; ++i)
+      {
+        document.getElementById(this.ufos[i]).style.top = (this.getInteger(this.ufos[i], 'top') + 5) + 'px';
+
+        var uB = this.getInteger(this.ufos[i], 'top');
+        var uT = uB + 30;
+        var uL = this.getInteger(this.ufos[i], 'marginLeft');
+        var uR = uL + 40;
+
+        // UFO out of screen
+        if(uB > this.windowHeight-65) {
+          document.getElementById(this.ufos[i]).remove();
+          continue;
+        }
+
+        var sB = this.windowHeight - 50;
+        var sT = sB + 30;
+        var sL = this.shooterX;
+        var sR = sL + 30;
+
+        // UFO - Shooter collision
+        if(this.isCollided(uT, uB, uL, uR, sT, sB, sL, sR)) {
+          this.dead();
+          break;
+        }
+
+        if(this.bullet)
+        {
+          var bB = this.getInteger('bullet', 'top');
+          var bT = bB + 10;
+          var bL = this.getInteger('bullet', 'marginLeft');
+          var bR = bL + 2;
+
+          // UFO - Bullet collision
+          if(this.isCollided(uT, uB, uL, uR, bT, bB, bL, bR)) {
+            (new Audio('assets/game/smash-sound.mp3')).play();
+            this.score += 5.5*this.difficulty;
+
+            document.getElementById(this.ufos[i]).remove();
+            this.deleteBullet();
+            continue;
+          }
+        }
+
+        temp.push(this.ufos[i]);
+      }
+      this.ufos = temp;
+    }, 100/this.difficulty);
+
+    const launchUfos = setInterval(() => {
+      this.createUfo();
+    }, 3000/this.difficulty);
+  }
+
+  startNewGame() {
+    this.initDifficulty();
+    this.startNewLife();
+    this.life = 3;
+  }
+
+  startNewLife() {
     this.shooter = true;
     this.shooterX = window.innerWidth*0.9 / 2 - 15;
 
@@ -38,13 +117,10 @@ export class GameComponent implements OnInit {
     this.life--;
     if(this.life < 0) {
       alert('Game over.');
-      this.life = 3;
+      this.startNewGame();
     }
-    this.reset();
-  }
-
-  ngOnInit() {
-    this.reset();
+    else
+      this.startNewLife();
   }
 
   deleteBullet() {
@@ -53,64 +129,25 @@ export class GameComponent implements OnInit {
     this.bullet = false;
   }
 
-  incrementBulletHeight = setInterval(() => {
-    if(!this.bullet) return;
+  initDifficulty() {
+    var num1to10 = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10'];
+    var x = prompt('Enter difficulty (1-10): ', '2');
+    console.log(x);
+    if(x in num1to10)
+      this.difficulty = parseInt(x);
+    else
+      this.difficulty = 2;
+  }
 
-    this.bulletY -= 2;
-
-    if(this.bulletY <= 0) {
-      this.deleteBullet();
-      return;
-    }
-
-    document.getElementById('bullet').style.top = this.bulletY + 'px';
-  }, 10-this.difficulty);
-
-  DescrementUfoHeight = setInterval(() => {
-
-    var temp = [];
-
-    for(var i=0 ; i<this.ufos.length ; ++i)
-    {
-      document.getElementById(this.ufos[i]).style.top = (parseInt(document.getElementById(this.ufos[i]).style.top.slice(0, -2)) + 5) + 'px';
-      var uB = parseInt(document.getElementById(this.ufos[i]).style.top.slice(0, -2));
-      var uT = uB + 30;
-      var uL = parseInt(document.getElementById(this.ufos[i]).style.marginLeft.slice(0, -2));
-      var uR = uL + 40;
-
-      if(!this.bullet){
-        if(uB <= this.windowHeight-80)
-          temp.push(this.ufos[i]);
-        else {
-          this.dead();
-          break;
-        }
-        continue;
-      }
-      if(uB > this.windowHeight-80) {
-        this.dead();
-        break;
-      }
-
-      var bB = parseInt(document.getElementById('bullet').style.top.slice(0, -2));
-      var bT = bB + 10;
-      var bL = parseInt(document.getElementById('bullet').style.marginLeft.slice(0, -2));
-      var bR = bL + 2;
-
-      if(((uB<=bT && bT<=uT) && ((uL<=bL && bL<=uR) || (uL<=bR && bR<=uR))) ||
-        ((uB<=bB && bB<=uT) && ((uL<=bL && bL<=uR) || (uL<=bR && bR<=uR))))
-      {
-        this.score += 10*this.difficulty;
-        document.getElementById(this.ufos[i]).remove();
-        this.deleteBullet();
-      }
-      else
-        temp.push(this.ufos[i]);
-    }
-
-    // console.log(this.ufos, temp)
-    this.ufos = temp;
-  }, 100/this.difficulty);
+  isCollided(aT, aB, aL, aR, bT, bB, bL, bR) {
+    if(((aB<=bT && bT<=aT) && ((aL<=bL && bL<=aR) || (aL<=bR && bR<=aR))) ||
+      ((aB<=bB && bB<=aT) && ((aL<=bL && bL<=aR) || (aL<=bR && bR<=aR))))
+      return true;
+    return false;
+  }
+  getInteger(id, property) {
+    return parseInt(document.getElementById(id).style[property].slice(0, -2));
+  }
 
   createUfo() {
     var posX = Math.random() * (window.innerWidth*0.8);
@@ -133,13 +170,6 @@ export class GameComponent implements OnInit {
     // console.log(this.ufos);
   }
 
-  launchUfos = setInterval(() => {
-    if(this.life < 0)
-      clearInterval(this.launchUfos);
-
-    this.createUfo();
-  }, 3000/this.difficulty);
-
   shootBullet(pos: number) {
     var bullet = document.createElement('img');
     bullet.src = "assets/game/bullet.png";
@@ -152,6 +182,9 @@ export class GameComponent implements OnInit {
     bullet.style.width = '2px';
 
     document.getElementById('bullet-container').appendChild(bullet);
+
+    (new Audio('assets/game/firing-sound.mp3')).play();
+
     this.bulletY = this.windowHeight - 75;
     this.bullet = true;
   }
@@ -160,9 +193,9 @@ export class GameComponent implements OnInit {
   handleKeyboardEvent(event: KeyboardEvent) {
     console.log(event.keyCode);
     if(event.keyCode == 39 && this.shooterX < (window.innerWidth-50))
-      this.shooterX += 10;
+      this.shooterX += (10 + this.difficulty);
     if(event.keyCode == 37 && this.shooterX > 50)
-      this.shooterX -= 10;
+      this.shooterX -= (10 + this.difficulty);
     if(event.keyCode == 32 && !this.bullet)
       this.shootBullet(this.shooterX);
   }
