@@ -1,4 +1,4 @@
-import { Component, OnInit, HostListener } from '@angular/core';
+import { Component, OnInit, HostListener, EventEmitter, Output } from '@angular/core';
 
 @Component({
   selector: 'app-game',
@@ -21,78 +21,79 @@ export class GameComponent implements OnInit {
   ufoCnt:number = 0;
   ufos = [];
 
+  @Output() onGameOver = new EventEmitter();
 
+  incrementBulletHeight = setInterval(() => {
+    if(!this.bullet) return;
+
+    this.bulletY -= this.difficulty;
+
+    if(this.bulletY <= 0) {
+      this.deleteBullet();
+      return;
+    }
+
+    document.getElementById('bullet').style.top = this.bulletY + 'px';
+  }, 10);
+
+  descrementUfoHeight = setInterval(() => {
+    var temp = [];
+    for(var i=0 ; i<this.ufos.length ; ++i)
+    {
+      document.getElementById(this.ufos[i]).style.top = (this.getInteger(this.ufos[i], 'top') + 5) + 'px';
+
+      var uB = this.getInteger(this.ufos[i], 'top');
+      var uT = uB + 30;
+      var uL = this.getInteger(this.ufos[i], 'marginLeft');
+      var uR = uL + 40;
+
+      // UFO out of screen
+      if(uB > this.windowHeight-65) {
+        document.getElementById(this.ufos[i]).remove();
+        continue;
+      }
+
+      var sB = this.windowHeight - 50;
+      var sT = sB + 30;
+      var sL = this.shooterX;
+      var sR = sL + 30;
+
+      // UFO - Shooter collision
+      if(this.isCollided(uT, uB, uL, uR, sT, sB, sL, sR)) {
+        this.dead();
+        break;
+      }
+
+      if(this.bullet)
+      {
+        var bB = this.getInteger('bullet', 'top');
+        var bT = bB + 10;
+        var bL = this.getInteger('bullet', 'marginLeft');
+        var bR = bL + 2;
+
+        // UFO - Bullet collision
+        if(this.isCollided(uT, uB, uL, uR, bT, bB, bL, bR)) {
+          (new Audio('assets/game/smash-sound.mp3')).play();
+          this.score += 5.5*this.difficulty;
+
+          document.getElementById(this.ufos[i]).remove();
+          this.deleteBullet();
+          continue;
+        }
+      }
+
+      temp.push(this.ufos[i]);
+    }
+    this.ufos = temp;
+  }, 100/this.difficulty);
+
+  launchUfos = setInterval(() => {
+    this.createUfo();
+  }, 3000/this.difficulty);
   ngOnInit() {
 
     this.startNewGame();
 
-    const incrementBulletHeight = setInterval(() => {
-      if(!this.bullet) return;
-
-      this.bulletY -= this.difficulty;
-
-      if(this.bulletY <= 0) {
-        this.deleteBullet();
-        return;
-      }
-
-      document.getElementById('bullet').style.top = this.bulletY + 'px';
-    }, 10);
-
-    const descrementUfoHeight = setInterval(() => {
-      var temp = [];
-      for(var i=0 ; i<this.ufos.length ; ++i)
-      {
-        document.getElementById(this.ufos[i]).style.top = (this.getInteger(this.ufos[i], 'top') + 5) + 'px';
-
-        var uB = this.getInteger(this.ufos[i], 'top');
-        var uT = uB + 30;
-        var uL = this.getInteger(this.ufos[i], 'marginLeft');
-        var uR = uL + 40;
-
-        // UFO out of screen
-        if(uB > this.windowHeight-65) {
-          document.getElementById(this.ufos[i]).remove();
-          continue;
-        }
-
-        var sB = this.windowHeight - 50;
-        var sT = sB + 30;
-        var sL = this.shooterX;
-        var sR = sL + 30;
-
-        // UFO - Shooter collision
-        if(this.isCollided(uT, uB, uL, uR, sT, sB, sL, sR)) {
-          this.dead();
-          break;
-        }
-
-        if(this.bullet)
-        {
-          var bB = this.getInteger('bullet', 'top');
-          var bT = bB + 10;
-          var bL = this.getInteger('bullet', 'marginLeft');
-          var bR = bL + 2;
-
-          // UFO - Bullet collision
-          if(this.isCollided(uT, uB, uL, uR, bT, bB, bL, bR)) {
-            (new Audio('assets/game/smash-sound.mp3')).play();
-            this.score += 5.5*this.difficulty;
-
-            document.getElementById(this.ufos[i]).remove();
-            this.deleteBullet();
-            continue;
-          }
-        }
-
-        temp.push(this.ufos[i]);
-      }
-      this.ufos = temp;
-    }, 100/this.difficulty);
-
-    const launchUfos = setInterval(() => {
-      this.createUfo();
-    }, 3000/this.difficulty);
   }
 
   startNewGame() {
@@ -115,9 +116,14 @@ export class GameComponent implements OnInit {
   dead() {
     console.log('dead');
     this.life--;
-    if(this.life < 0) {
-      alert('Game over.');
-      this.startNewGame();
+    if(this.life < 3) {
+      this.onGameOver.emit(this.score);
+      clearInterval(this.incrementBulletHeight);
+      clearInterval(this.descrementUfoHeight);
+      clearInterval(this.launchUfos);
+      // setTimeout(() => {
+      //   this.startNewGame();
+      // }, 1000);
     }
     else
       this.startNewLife();

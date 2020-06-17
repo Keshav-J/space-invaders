@@ -1,2 +1,3 @@
-<app-game></app-game>
-<!-- <app-highscores></app-highscores> -->
+<app-game *ngIf="isGame" (onGameOver)="checkScores($event)" id="game"></app-game>
+<app-highscores *ngIf="isHighscores" [scores]="highscores" (onPlay)="play()"></app-highscores>
+<app-save-score *ngIf="isSaveScore" [score]="curScore" (onSave)="updateLeaderBoard($event)"></app-save-score>

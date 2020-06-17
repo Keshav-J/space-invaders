@@ -9,12 +9,14 @@ import { MatDividerModule } from '@angular/material/divider';
 import { AppComponent } from './app.component';
 import { GameComponent } from './game/game.component';
 import { HighscoresComponent } from './highscores/highscores.component';
+import { SaveScoreComponent } from './save-score/save-score.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     GameComponent,
-    HighscoresComponent
+    HighscoresComponent,
+    SaveScoreComponent
   ],
   imports: [
     BrowserModule,

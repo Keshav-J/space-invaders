@@ -1,6 +1,24 @@
-<div>
-  <h1> Highscores </h1>
-  <table>
-
+<div class="container text-center">
+  <h1> HIGHSCORES </h1>
+  <table class="table">
+    <colgroup>
+      <col width="100">
+      <col>
+      <col width="100">
+    </colgroup>
+    <tr>
+      <th> Rank </th>
+      <th> Name </th>
+      <th> Score </th>
+    </tr>
+    <tr *ngFor="let player of scores; index as i">
+      <td> {{ i + 1}} </td>
+      <td> {{ player.name }} </td>
+      <td> {{ player.score }} </td>
+    </tr>
   </table>
+
+  <br><br>
+
+  <button class="play-button" (click)="play()"> Play </button>
 </div>
