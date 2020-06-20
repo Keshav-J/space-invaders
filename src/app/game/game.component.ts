@@ -116,14 +116,11 @@ export class GameComponent implements OnInit {
   dead() {
     console.log('dead');
     this.life--;
-    if(this.life < 3) {
+    if(this.life < 0) {
       this.onGameOver.emit(this.score);
       clearInterval(this.incrementBulletHeight);
       clearInterval(this.descrementUfoHeight);
       clearInterval(this.launchUfos);
-      // setTimeout(() => {
-      //   this.startNewGame();
-      // }, 1000);
     }
     else
       this.startNewLife();
