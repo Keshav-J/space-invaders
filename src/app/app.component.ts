@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
 
 @Component({
   selector: 'app-root',
@@ -14,6 +15,25 @@ export class AppComponent {
   highscores = [];
   curScore = 0;
   curName = '';
+
+  constructor(private http: HttpClient) { }
+
+  getHighScores() {
+    this.http.post<any>(`https://cors-anywhere.herokuapp.com/https://mean-space-invaders.herokuapp.com/getScores/`, {})
+      .subscribe(
+        data => {
+          console.log(data);
+          this.highscores = data;
+        },
+        error => {
+          console.log(error.error.text);
+        }
+      );
+  }
+
+  ngOnInit() {
+    this.getHighScores();
+  }
 
   play() {
     this.isHighscores = false;
