@@ -18,6 +18,10 @@ export class AppComponent {
 
   constructor(private http: HttpClient) { }
 
+  ngOnInit() {
+    this.getHighScores();
+  }
+
   getHighScores() {
     this.http.post<any>(`https://cors-anywhere.herokuapp.com/https://mean-space-invaders.herokuapp.com/getScores/`, {})
       .subscribe(
@@ -31,8 +35,22 @@ export class AppComponent {
       );
   }
 
-  ngOnInit() {
-    this.getHighScores();
+  updateHighscores() {
+    const params = {
+      name: this.curName,
+      score: this.curScore
+    };
+
+    this.http.post<any>(`https://cors-anywhere.herokuapp.com/https://mean-space-invaders.herokuapp.com/setScores/`, params)
+      .subscribe(
+        data => {
+          console.log(data);
+          this.highscores = data;
+        },
+        error => {
+          console.log(error.error.text);
+        }
+      );
   }
 
   play() {
@@ -51,6 +69,7 @@ export class AppComponent {
   }
 
   showLeaderBoard() {
+    this.getHighScores();
     this.isGame = false;
     this.isSaveScore = false;
     setTimeout(() => {
@@ -61,34 +80,7 @@ export class AppComponent {
   updateLeaderBoard(name: string) {
     this.curName = name;
 
-    if(this.highscores.length != 0) {
-      var flag:Boolean = false;
-      for(var i=0 ; i<this.highscores.length ; ++i) {
-        if(this.curScore >= this.highscores[i].score) {
-          this.curName;
-          this.highscores.splice(i, 0, {
-            name: this.curName,
-            score: this.curScore
-          });
-          flag = true;
-          break;
-        }
-      }
-      if(this.highscores.length > 10)
-        this.highscores.pop();
-      if(!flag && this.highscores.length<10) {
-        this.highscores.push({
-          name: this.curName,
-          score: this.curScore
-        });
-      }
-    }
-    else {
-      this.highscores.push({
-        name: this.curName,
-        score: this.curScore
-      });
-    }
+    this.updateHighscores();
 
     this.showLeaderBoard();
   }
