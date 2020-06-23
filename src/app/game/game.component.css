@@ -27,3 +27,25 @@
   right: 5%;
   font-weight: bold;
 }
+
+.moveLeft {
+  position: fixed;
+  width: 20%;
+  min-height: 2000px;
+  top: 0px;
+}
+
+.moveRight {
+  position: fixed;
+  width: 20%;
+  min-height: 2000px;
+  top: 0px;
+  right: 0px;
+}
+
+.shoot {
+  position: fixed;
+  width: 100%;
+  min-height: 2000px;
+  top: 0px;
+}

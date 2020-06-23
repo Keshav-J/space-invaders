@@ -192,10 +192,24 @@ export class GameComponent implements OnInit {
     this.bullet = true;
   }
 
+  moveLeft = function() {
+    console.log('left');
+    if(this.shooterX > 20)
+      this.shooterX -= (10 + this.difficulty);
+  }
+  moveRight = function() {
+    if(this.shooterX < (window.innerWidth-50))
+      this.shooterX += (10 + this.difficulty);
+  }
+  shoot = function() {
+    if(!this.bullet)
+      this.shootBullet(this.shooterX);
+  }
+
   @HostListener('document:keydown', ['$event'])
   handleKeyboardEvent(event: KeyboardEvent) {
     console.log(event.keyCode);
-    if(event.keyCode == 39 && this.shooterX < (window.innerWidth-50))
+    if(event.keyCode == 39 && this.shooterX < (window.innerWidth-20))
       this.shooterX += (10 + this.difficulty);
     if(event.keyCode == 37 && this.shooterX > 50)
       this.shooterX -= (10 + this.difficulty);
