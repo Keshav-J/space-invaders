@@ -26,7 +26,6 @@ export class AppComponent {
     this.http.get<any>(`https://mean-space-invaders.herokuapp.com/getScores/`, {})
       .subscribe(
         data => {
-          console.log(data);
           this.highscores = data;
         },
         error => {
@@ -44,11 +43,9 @@ export class AppComponent {
     this.http.put<any>(`https://mean-space-invaders.herokuapp.com/setScores/`, params)
       .subscribe(
         data => {
-          console.log(data);
           this.highscores = data;
         },
         error => {
-          console.log(error.error.text);
           console.log(error.error.text);
         }
       );
@@ -88,7 +85,6 @@ export class AppComponent {
 
   checkScores(score:number) {
     this.curScore = score;
-    console.log(this.curScore);
 
     if(this.highscores.length<10 || (this.curScore >= this.highscores[this.highscores.length-1].score))
       this.getName();

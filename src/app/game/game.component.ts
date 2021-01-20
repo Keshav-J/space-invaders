@@ -90,10 +90,9 @@ export class GameComponent implements OnInit {
   launchUfos = setInterval(() => {
     this.createUfo();
   }, 3000/this.difficulty);
+  
   ngOnInit() {
-
     this.startNewGame();
-
   }
 
   startNewGame() {
@@ -133,9 +132,8 @@ export class GameComponent implements OnInit {
   }
 
   initDifficulty() {
-    var nums = ['1', '2', '3', '4', '5', '6', '7', '8', '9'];
+    var nums = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10'];
     var x = prompt('Enter difficulty (1-9): ', '2');
-    console.log(x);
     if(x in nums)
       this.difficulty = parseInt(x);
     else
@@ -170,7 +168,6 @@ export class GameComponent implements OnInit {
     document.getElementById('ufo-container').appendChild(ufo);
 
     this.ufos.push(ufo.id);
-    // console.log(this.ufos);
   }
 
   shootBullet(pos: number) {
@@ -193,7 +190,6 @@ export class GameComponent implements OnInit {
   }
 
   moveLeft = function() {
-    console.log('left');
     if(this.shooterX > 20)
       this.shooterX -= (10 + this.difficulty);
   }
@@ -208,12 +204,11 @@ export class GameComponent implements OnInit {
 
   @HostListener('document:keydown', ['$event'])
   handleKeyboardEvent(event: KeyboardEvent) {
-    console.log(event.keyCode);
-    if(event.keyCode == 39 && this.shooterX < (window.innerWidth-20))
+    if(event.key === 'ArrowRight' && (this.shooterX+30) < (window.innerWidth-30))
       this.shooterX += (10 + this.difficulty);
-    if(event.keyCode == 37 && this.shooterX > 50)
+    if(event.key === 'ArrowLeft' && this.shooterX > 30)
       this.shooterX -= (10 + this.difficulty);
-    if(event.keyCode == 32 && !this.bullet)
+    if(event.key === ' ' && !this.bullet)
       this.shootBullet(this.shooterX);
   }
 }
