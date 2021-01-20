@@ -23,7 +23,7 @@ export class AppComponent {
   }
 
   getHighScores() {
-    this.http.post<any>(`https://cors-anywhere.herokuapp.com/https://mean-space-invaders.herokuapp.com/getScores/`, {})
+    this.http.get<any>(`https://mean-space-invaders.herokuapp.com/getScores/`, {})
       .subscribe(
         data => {
           console.log(data);
@@ -41,13 +41,14 @@ export class AppComponent {
       score: this.curScore
     };
 
-    this.http.post<any>(`https://cors-anywhere.herokuapp.com/https://mean-space-invaders.herokuapp.com/setScores/`, params)
+    this.http.put<any>(`https://mean-space-invaders.herokuapp.com/setScores/`, params)
       .subscribe(
         data => {
           console.log(data);
           this.highscores = data;
         },
         error => {
+          console.log(error.error.text);
           console.log(error.error.text);
         }
       );

@@ -116,8 +116,8 @@ export class GameComponent implements OnInit {
   dead() {
     console.log('dead');
     this.life--;
-    if(this.life < 0) {
-      this.onGameOver.emit(this.score);
+    if(this.life < 1) {
+      this.onGameOver.emit(Math.ceil(this.score));
       clearInterval(this.incrementBulletHeight);
       clearInterval(this.descrementUfoHeight);
       clearInterval(this.launchUfos);
@@ -133,10 +133,10 @@ export class GameComponent implements OnInit {
   }
 
   initDifficulty() {
-    var num1to10 = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10'];
-    var x = prompt('Enter difficulty (1-10): ', '2');
+    var nums = ['1', '2', '3', '4', '5', '6', '7', '8', '9'];
+    var x = prompt('Enter difficulty (1-9): ', '2');
     console.log(x);
-    if(x in num1to10)
+    if(x in nums)
       this.difficulty = parseInt(x);
     else
       this.difficulty = 2;
