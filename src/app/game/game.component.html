@@ -1,23 +1,23 @@
-<div class="shoot" (click)="shoot()"></div>
-<div class="moveLeft" (click)="moveLeft()"></div>
-<div class="moveRight" (click)="moveRight()"></div>
+<!--
+  <div class="shoot" (click)="shoot()"></div>
+  <div class="moveLeft" (click)="moveLeft()"></div>
+  <div class="moveRight" (click)="moveRight()"></div>
+-->
 
-<div id="ufo-container"></div>
+<canvas id="canvas" #canvas></canvas>
 
-<div id="bullet-container"></div>
-
-
-<img id="shooter" *ngIf="shooter" [style.margin-left]="shooterX+'px'" src="assets/game/shooter.png" alt="shooter" class="shooter shooter-active">
-
+<img id="player" src="assets/game/shooter.png" alt="shooter" />
+<img id="bullet" src="assets/game/bullet.png" alt="bullet" />
+<img id="ufo" src="assets/game/ufo.png" alt="ufo" />
 
 <div class="ground" style="width: calc(100vw - 60px);">
   <mat-divider></mat-divider>
 </div>
 
-<div class="shooter-life-dock">
-  <img *ngIf="life>=1" [style.margin-left]="'0px'" src="assets/game/shooter.png" alt="shooter" class="shooter">
-  <img *ngIf="life>=2" [style.margin-left]="'35px'" src="assets/game/shooter.png" alt="shooter" class="shooter">
-  <img *ngIf="life>=3" [style.margin-left]="'70px'" src="assets/game/shooter.png" alt="shooter" class="shooter">
+<div class="life-dock">
+  <img class="life" *ngIf="life>=1" [style.margin-left]="'0px'" src="assets/game/shooter.png" alt="shooter">
+  <img class="life" *ngIf="life>=2" [style.margin-left]="'35px'" src="assets/game/shooter.png" alt="shooter">
+  <img class="life" *ngIf="life>=3" [style.margin-left]="'70px'" src="assets/game/shooter.png" alt="shooter">
 </div>
 
-<span class="high-score"> SCORE {{ score | number: '5.0-0' }} </span>
+<span class="high-score"> SCORE {{ score | number: '7.0-0' }} </span>

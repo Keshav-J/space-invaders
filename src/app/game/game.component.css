@@ -1,10 +1,17 @@
-.shooter {
+#canvas {
+  background-color: #1e1f26;
+  position: absolute;
+}
+#player, #bullet, #ufo {
+  display: none;
+}
+
+.life {
   position: absolute;
   height: 20px;
   width: 30px;
 }
-.shooter-active { bottom: 50px; }
-.shooter-life-dock {
+.life-dock {
   position: absolute;
   margin-left: 40px;
   bottom: 30px;
@@ -26,26 +33,4 @@
   bottom: 10px;
   right: 40px;
   font-weight: bold;
-}
-
-.moveLeft {
-  position: fixed;
-  width: 20%;
-  min-height: 2000px;
-  top: 0px;
-}
-
-.moveRight {
-  position: fixed;
-  width: 20%;
-  min-height: 2000px;
-  top: 0px;
-  right: 0px;
-}
-
-.shoot {
-  position: fixed;
-  width: 100%;
-  min-height: 2000px;
-  top: 0px;
 }
