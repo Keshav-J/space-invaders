@@ -1,51 +1,61 @@
-.shooter {
+#canvas {
   position: absolute;
-  height: 20px;
-  width: 30px;
 }
-.shooter-active { bottom: 50px; }
-.shooter-life-dock {
+#player, #bullet, #ufo {
+  display: none;
+}
+
+#level-banner {
+  color: #00fc00;
+  font-family: Korean Looks;
+  font-size: 25px;
   position: absolute;
-  margin-left: 40px;
-  bottom: 30px;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  opacity: 0;
+  transition: 1s;
+}
+
+.level {
+  font-family: Korean Looks;
+  color: #00fc00;
+  bottom: 8px;
+  left: 20px;
+  font-weight: bold;
+}
+
+.life {
+  height: 15px;
+  width: 20px;
+  padding: 0px 5px;
+}
+.life-dock {
+  left: 90px;
+  height: 15px;
+  top: 50%;
+  transform: translateY(-50%);
 }
 
 .ground {
+  background-image: url('src/assets/game/moving_stars.gif');
   position: absolute;
-  bottom: 40px;
-  left: 30px;
+  height: 40px;
+  width: 100vw;
+  bottom: 0px;
 }
 .mat-divider {
   border-top-color: #00fc00;
 }
+.dock > * {
+  position: absolute;
+}
 
 .high-score {
   font-family: Korean Looks;
-  position: absolute;
   color: #00fc00;
-  bottom: 10px;
   right: 40px;
   font-weight: bold;
-}
-
-.moveLeft {
-  position: fixed;
-  width: 20%;
-  min-height: 2000px;
-  top: 0px;
-}
-
-.moveRight {
-  position: fixed;
-  width: 20%;
-  min-height: 2000px;
-  top: 0px;
-  right: 0px;
-}
-
-.shoot {
-  position: fixed;
-  width: 100%;
-  min-height: 2000px;
-  top: 0px;
+  top: 50%;
+  transform: translateY(-50%);
 }

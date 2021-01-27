@@ -1,4 +1,7 @@
-import { Component, OnInit, HostListener, EventEmitter, Output } from '@angular/core';
+import { Component, OnInit, HostListener, EventEmitter, Output, ElementRef, ViewChild } from '@angular/core';
+import { Bullet } from '../core/bullet';
+import { Player } from '../core/player';
+import { Ufo } from '../core/ufo';
 
 @Component({
   selector: 'app-game',
@@ -6,93 +9,43 @@ import { Component, OnInit, HostListener, EventEmitter, Output } from '@angular/
   styleUrls: ['./game.component.css']
 })
 export class GameComponent implements OnInit {
-  windowHeight:number = window.innerHeight;
-  difficulty:number = 2;
 
-  score:number = 0;
-  life:number = 3;
+  @ViewChild('canvas', { static: true })
+  private canvas: ElementRef<HTMLCanvasElement>;
+  private context: CanvasRenderingContext2D;
 
-  shooter:boolean = false;
-  shooterX:number = 0;
+  private player: Player;
+  private ufoList: Ufo[];
+  private bulletList: Bullet[];
+  
+  private canvasCounter: number;
+  
+  private difficulty: number = 2;
+  private sprintSpeed: number = 2.5;
+  private controls = {
+    left: false,
+    up: false,
+    right: false,
+    down: false,
+    shoot: false,
+    sprint: 1
+  };
 
-  bullet:boolean = false;
-  bulletY:number = this.windowHeight - 75;
-
-  ufoCnt:number = 0;
-  ufos = [];
+  score: number = 0;
+  life: number = 3;
+  level: number = -1;
 
   @Output() onGameOver = new EventEmitter();
 
-  incrementBulletHeight = setInterval(() => {
-    if(!this.bullet) return;
-
-    this.bulletY -= this.difficulty;
-
-    if(this.bulletY <= 0) {
-      this.deleteBullet();
-      return;
-    }
-
-    document.getElementById('bullet').style.top = this.bulletY + 'px';
-  }, 10);
-
-  descrementUfoHeight = setInterval(() => {
-    var temp = [];
-    for(var i=0 ; i<this.ufos.length ; ++i)
-    {
-      document.getElementById(this.ufos[i]).style.top = (this.getInteger(this.ufos[i], 'top') + 5) + 'px';
-
-      var uB = this.getInteger(this.ufos[i], 'top');
-      var uT = uB + 30;
-      var uL = this.getInteger(this.ufos[i], 'marginLeft');
-      var uR = uL + 40;
-
-      // UFO out of screen
-      if(uB > this.windowHeight-65) {
-        document.getElementById(this.ufos[i]).remove();
-        continue;
-      }
-
-      var sB = this.windowHeight - 50;
-      var sT = sB + 30;
-      var sL = this.shooterX;
-      var sR = sL + 30;
-
-      // UFO - Shooter collision
-      if(this.isCollided(uT, uB, uL, uR, sT, sB, sL, sR)) {
-        this.dead();
-        break;
-      }
-
-      if(this.bullet)
-      {
-        var bB = this.getInteger('bullet', 'top');
-        var bT = bB + 10;
-        var bL = this.getInteger('bullet', 'marginLeft');
-        var bR = bL + 2;
-
-        // UFO - Bullet collision
-        if(this.isCollided(uT, uB, uL, uR, bT, bB, bL, bR)) {
-          (new Audio('assets/game/smash-sound.mp3')).play();
-          this.score += 5.5*this.difficulty;
-
-          document.getElementById(this.ufos[i]).remove();
-          this.deleteBullet();
-          continue;
-        }
-      }
-
-      temp.push(this.ufos[i]);
-    }
-    this.ufos = temp;
-  }, 100/this.difficulty);
-
-  launchUfos = setInterval(() => {
-    this.createUfo();
-  }, 3000/this.difficulty);
-  
   ngOnInit() {
+    this.canvas.nativeElement.height = window.innerHeight;
+    this.canvas.nativeElement.width = window.innerWidth;
+    this.context = this.canvas.nativeElement.getContext('2d');
+
+    this.canvasCounter = 1;
+
     this.startNewGame();
+    this.animate();
   }
 
   startNewGame() {
@@ -102,113 +55,173 @@ export class GameComponent implements OnInit {
   }
 
   startNewLife() {
-    this.shooter = true;
-    this.shooterX = window.innerWidth*0.9 / 2 - 15;
+    this.player = new Player(20, 30, window.innerWidth / 2 - 15, window.innerHeight - 70, this.difficulty);
+    this.bulletList = [];
+    this.ufoList = [];
+  }
 
-    if(this.bullet)
-      this.deleteBullet();
-    for(var i=0 ; i<this.ufos.length ; ++i)
-      document.getElementById(this.ufos[i]).remove();
-    this.ufos = [];
+  newUfo(): void {
+    this.ufoList.push(new Ufo(30, 40, this.difficulty * this.level, this.difficulty));
+  }
+
+  newBullet(): void {
+    this.bulletList.push(new Bullet(10, 2, this.player.x + 14, this.player.y, this.difficulty * 4));
   }
 
   dead() {
-    console.log('dead');
+    // console.log('dead');
+    this.bulletList = [];
+    this.ufoList = [];
     this.life--;
+
     if(this.life < 1) {
       this.onGameOver.emit(Math.ceil(this.score));
-      clearInterval(this.incrementBulletHeight);
-      clearInterval(this.descrementUfoHeight);
-      clearInterval(this.launchUfos);
-    }
-    else
+    } else {
       this.startNewLife();
-  }
-
-  deleteBullet() {
-    document.getElementById('bullet').remove();
-    this.bulletY = this.windowHeight - 75;
-    this.bullet = false;
+    }
   }
 
   initDifficulty() {
     var nums = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10'];
-    var x = prompt('Enter difficulty (1-9): ', '2');
-    if(x in nums)
+    var x = prompt('Enter difficulty (1-10): ', '2');
+    if(nums.includes(x))
       this.difficulty = parseInt(x);
     else
       this.difficulty = 2;
   }
 
   isCollided(aT, aB, aL, aR, bT, bB, bL, bR) {
-    if(((aB<=bT && bT<=aT) && ((aL<=bL && bL<=aR) || (aL<=bR && bR<=aR))) ||
-      ((aB<=bB && bB<=aT) && ((aL<=bL && bL<=aR) || (aL<=bR && bR<=aR))))
+    if(((aT <= bT && bT <= aB) && ((aL <= bL && bL <= aR) || (aL <= bR && bR <= aR)))
+      || ((aT <= bB && bB <= aB) && ((aL <= bL && bL <= aR) || (aL <= bR && bR <= aR))))
       return true;
     return false;
   }
-  getInteger(id, property) {
-    return parseInt(document.getElementById(id).style[property].slice(0, -2));
+  
+  clear(): void {
+    this.context.clearRect(0, 0, this.canvas.nativeElement.width, this.canvas.nativeElement.height);
+  }
+  
+  animate() {
+    this.clear();
+    this.canvasCounter++;
+    
+    if(Math.floor(this.score / 100) > this.level) {
+      console.log('increase');
+      this.level++;
+      document.getElementById('level-banner').style.opacity = '1';
+      setTimeout(() => {
+        document.getElementById('level-banner').style.opacity = '0';
+      }, 1500);
+    }
+    this.player.update(this.context);
+
+    this.ufoList.forEach((ufo, i) => {
+      if(this.isCollided(ufo.y, ufo.y+ufo.height, ufo.x, ufo.x+ufo.width,
+        this.player.y, this.player.y+this.player.height, this.player.x, this.player.x+this.player.width)) {
+        // console.log('collision');
+        this.dead();
+      } else if(ufo.y < window.innerHeight - 40) {
+        ufo.update(this.context);
+      } else {
+        this.ufoList.splice(i, 1);
+      }
+    });
+
+    this.bulletList.forEach((bullet, i) => {
+      this.ufoList.forEach((ufo, j) => {
+        if(this.isCollided(ufo.y, ufo.y+ufo.height, ufo.x, ufo.x+ufo.width,
+            bullet.y, bullet.y+bullet.height, bullet.x, bullet.x+bullet.width)) {
+          // console.log('hit');
+          this.controls.shoot = false;
+          this.score += this.difficulty;
+          this.bulletList.splice(i, 1);
+          this.ufoList.splice(j, 1);
+        }
+      });
+      
+      if(0 < bullet.y + bullet.height) {
+        bullet.update(this.context);
+      } else {
+        this.bulletList.splice(i, 1);
+      }
+    });
+    
+    if(this.canvasCounter % (100 / this.difficulty) == 0) {
+      this.newUfo();
+    }
+    
+    requestAnimationFrame(this.animate.bind(this));
   }
 
-  createUfo() {
-    var posX = Math.random() * (window.innerWidth*0.8);
-    this.ufoCnt++;
-
-    var ufo = document.createElement('img');
-    ufo.src = "assets/game/ufo1.png";
-    ufo.id = 'ufo' + this.ufoCnt;
-    ufo.className = 'ufo';
-    ufo.alt = "UFO";
-    ufo.style.position = 'absolute';
-    ufo.style.marginLeft = (posX + window.innerWidth*0.05) + 'px';
-    ufo.style.top = '-20px';
-    ufo.style.height = '30px';
-    ufo.style.width = '40px';
-
-    document.getElementById('ufo-container').appendChild(ufo);
-
-    this.ufos.push(ufo.id);
-  }
-
-  shootBullet(pos: number) {
-    var bullet = document.createElement('img');
-    bullet.src = "assets/game/bullet.png";
-    bullet.id = 'bullet';
-    bullet.alt = "bullet";
-    bullet.style.position = 'absolute';
-    bullet.style.marginLeft = (pos + 14) + 'px';
-    bullet.style.top = this.windowHeight - 75 + 'px';
-    bullet.style.height = '10px';
-    bullet.style.width = '2px';
-
-    document.getElementById('bullet-container').appendChild(bullet);
-
-    (new Audio('assets/game/firing-sound.mp3')).play();
-
-    this.bulletY = this.windowHeight - 75;
-    this.bullet = true;
-  }
-
-  moveLeft = function() {
-    if(this.shooterX > 20)
-      this.shooterX -= (10 + this.difficulty);
-  }
-  moveRight = function() {
-    if(this.shooterX < (window.innerWidth-50))
-      this.shooterX += (10 + this.difficulty);
-  }
-  shoot = function() {
-    if(!this.bullet)
-      this.shootBullet(this.shooterX);
-  }
+  moveLeft(): void  { this.player.dx = -this.controls.sprint * this.player.speed; }
+  moveUp(): void    { this.player.dy = -this.controls.sprint * this.player.speed; }
+  moveRight(): void { this.player.dx = this.controls.sprint * this.player.speed; }
+  moveDown(): void  { this.player.dy = this.controls.sprint * this.player.speed; }
+  
+  resetX(): void { this.player.dx = 0; }
+  resetY(): void { this.player.dy = 0; }
 
   @HostListener('document:keydown', ['$event'])
-  handleKeyboardEvent(event: KeyboardEvent) {
-    if(event.key === 'ArrowRight' && (this.shooterX+30) < (window.innerWidth-30))
-      this.shooterX += (10 + this.difficulty);
-    if(event.key === 'ArrowLeft' && this.shooterX > 30)
-      this.shooterX -= (10 + this.difficulty);
-    if(event.key === ' ' && !this.bullet)
-      this.shootBullet(this.shooterX);
+  keyDown(event: KeyboardEvent) {
+    if(event.key === 'ArrowLeft' || event.key === 'a') {
+      this.controls.left = true;
+      this.moveLeft();
+    } else if(event.key === 'ArrowUp' || event.key === 'w') {
+      this.controls.up = true;
+      this.moveUp();
+    } else if(event.key === 'ArrowRight' || event.key === 'd') {
+      this.controls.right = true;
+      this.moveRight();
+    } else if(event.key === 'ArrowDown' || event.key === 's') {
+      this.controls.down = true;
+      this.moveDown();
+    } else if(event.key === ' ' || event.key === 'Enter') {
+      if(!this.controls.shoot && this.bulletList.length < 5)
+        this.newBullet();
+      this.controls.shoot = true;
+    } else if(event.key === 'Shift') {
+      this.controls.sprint = this.sprintSpeed;
+      this.player.dx = Math.max(-this.sprintSpeed*this.player.speed,
+                                Math.min(this.sprintSpeed*this.player.speed, this.sprintSpeed*this.player.dx));
+      this.player.dy = Math.max(-this.sprintSpeed*this.player.speed,
+                                Math.min(this.sprintSpeed*this.player.speed, this.sprintSpeed*this.player.dy));
+    }
+  }
+
+  @HostListener('document:keyup', ['$event'])
+  keyUp(event: KeyboardEvent) {
+    if(event.key === 'ArrowLeft' || event.key === 'a') {
+      this.controls.left = false;
+      if(this.controls.right) this.moveRight();
+      else                    this.resetX();
+    } else if(event.key === 'ArrowUp' || event.key === 'w') {
+      this.controls.up = false;
+      if(this.controls.down)  this.moveDown();
+      else                    this.resetY();
+    } else if(event.key === 'ArrowRight' || event.key === 'd') {
+      this.controls.right = false;
+      if(this.controls.left)  this.moveLeft();
+      else                    this.resetX();
+    } else if(event.key === 'ArrowDown' || event.key === 's') {
+      this.controls.down = false;
+      if(this.controls.up)    this.moveUp();
+      else                    this.resetY();
+    } else if(event.key === ' ' || event.key === 'Enter') {
+      this.controls.shoot = false;
+    } else if(event.key === 'Shift') {
+      this.controls.sprint = 2;
+      this.player.dx = Math.max(-this.player.speed, Math.min(this.player.speed, this.player.dx));
+      this.player.dy = Math.max(-this.player.speed, Math.min(this.player.speed, this.player.dy));
+    }
+  }
+
+  @HostListener('window:resize', ['$event'])
+  resize(event: Event) {
+    console.log('resize');
+    const ratio = this.player.x / this.canvas.nativeElement.width;
+    this.canvas.nativeElement.height = window.innerHeight;
+    this.canvas.nativeElement.width = window.innerWidth;
+    this.player.x = Math.min(Math.max(30, ratio * this.canvas.nativeElement.width),
+                              window.innerWidth - 30 - this.player.width);
   }
 }

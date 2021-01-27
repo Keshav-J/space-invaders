@@ -10,11 +10,17 @@ export class HighscoresComponent implements OnInit {
 
   @Output() onPlay = new EventEmitter();
 
+  isInstructions: boolean = false;
+
   ngOnInit() {
 
   }
 
-  play() {
+  play():void {
     this.onPlay.emit();
+  }
+
+  toggle(): void {
+    this.isInstructions = !this.isInstructions;
   }
 }
