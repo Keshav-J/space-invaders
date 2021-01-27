@@ -33,6 +33,7 @@ export class GameComponent implements OnInit {
 
   score: number = 0;
   life: number = 3;
+  level: number = -1;
 
   @Output() onGameOver = new EventEmitter();
 
@@ -60,7 +61,7 @@ export class GameComponent implements OnInit {
   }
 
   newUfo(): void {
-    this.ufoList.push(new Ufo(30, 40, this.difficulty * Math.floor(this.score / 100), this.difficulty));
+    this.ufoList.push(new Ufo(30, 40, this.difficulty * this.level, this.difficulty));
   }
 
   newBullet(): void {
@@ -82,7 +83,7 @@ export class GameComponent implements OnInit {
 
   initDifficulty() {
     var nums = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10'];
-    var x = '2';//prompt('Enter difficulty (1-10): ', '2');
+    var x = prompt('Enter difficulty (1-10): ', '2');
     if(nums.includes(x))
       this.difficulty = parseInt(x);
     else
@@ -95,20 +96,28 @@ export class GameComponent implements OnInit {
       return true;
     return false;
   }
-
+  
   clear(): void {
     this.context.clearRect(0, 0, this.canvas.nativeElement.width, this.canvas.nativeElement.height);
   }
-
+  
   animate() {
     this.clear();
     this.canvasCounter++;
-
+    
+    if(Math.floor(this.score / 100) > this.level) {
+      console.log('increase');
+      this.level++;
+      document.getElementById('level-banner').style.opacity = '1';
+      setTimeout(() => {
+        document.getElementById('level-banner').style.opacity = '0';
+      }, 1500);
+    }
     this.player.update(this.context);
 
     this.ufoList.forEach((ufo, i) => {
       if(this.isCollided(ufo.y, ufo.y+ufo.height, ufo.x, ufo.x+ufo.width,
-          this.player.y, this.player.y+this.player.height, this.player.x, this.player.x+this.player.width)) {
+        this.player.y, this.player.y+this.player.height, this.player.x, this.player.x+this.player.width)) {
         // console.log('collision');
         this.dead();
       } else if(ufo.y < window.innerHeight - 40) {
@@ -129,18 +138,18 @@ export class GameComponent implements OnInit {
           this.ufoList.splice(j, 1);
         }
       });
-
+      
       if(0 < bullet.y + bullet.height) {
         bullet.update(this.context);
       } else {
         this.bulletList.splice(i, 1);
       }
     });
-
+    
     if(this.canvasCounter % (100 / this.difficulty) == 0) {
       this.newUfo();
     }
-
+    
     requestAnimationFrame(this.animate.bind(this));
   }
 

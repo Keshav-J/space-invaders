@@ -7,9 +7,8 @@
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  /* width: 600px; */
-  padding: 30px 20px 30px 20px;
-  font-size: 18px;
+  padding: 30px 20px;
+  font-size: 1rem;
   border: 1px solid #00fc00;
 }
 
@@ -28,6 +27,21 @@
 .play-button {
   background-color: transparent;
   border: 1px solid #00fc00;
-  padding: 10px 20px 10px 20px;
+  padding: 10px 20px;
+  margin: 10px;
   cursor: pointer;
 }
+
+.instructions ul.instruction-list {
+  padding-left: 20px;
+  padding-right: 10px;
+  text-align: left;
+  left: 100px;
+}
+
+.controls {
+  position: absolute;
+  text-align: left;
+  left: 60px;
+}
+
