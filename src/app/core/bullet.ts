@@ -15,7 +15,7 @@ export class Bullet {
         this.width = width;
         this.x = x;
         this.y = y;
-        this.dy = dy;
+        this.dy = Math.min(25, dy);
         this.ref = document.getElementById('bullet') as HTMLImageElement;
     }
   

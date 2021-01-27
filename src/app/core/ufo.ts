@@ -9,11 +9,13 @@ export class Ufo {
   
     constructor(height: number,
                 width: number,
+                dx: number,
                 dy: number) {
         this.height = height;
         this.width = width;
-        this.x = (Math.random()*(window.innerWidth*0.8) + window.innerWidth*0.05);
+        this.x = (Math.random()*(window.innerWidth - width));
         this.y = -this.height;
+        this.dx = -dx + Math.floor(Math.random() * (2*dx + 1));
         this.dy = dy;
         this.ref = document.getElementById('ufo') as HTMLImageElement;
     }
@@ -26,6 +28,10 @@ export class Ufo {
     update(context: CanvasRenderingContext2D): void {
         this.draw(context);
 
+        if(this.x< 0 || window.innerWidth < this.x + this.width + this.dx)
+			this.dx = -this.dx;
+
+        this.x += this.dx;
         this.y += this.dy;
     }
 }

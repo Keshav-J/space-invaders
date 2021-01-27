@@ -21,7 +21,7 @@ export class GameComponent implements OnInit {
   private canvasCounter: number;
   
   private difficulty: number = 2;
-  private sprintSpeed: number = 1.5;
+  private sprintSpeed: number = 2.5;
   private controls = {
     left: false,
     up: false,
@@ -60,11 +60,11 @@ export class GameComponent implements OnInit {
   }
 
   newUfo(): void {
-    this.ufoList.push(new Ufo(30, 40, this.difficulty));
+    this.ufoList.push(new Ufo(30, 40, this.difficulty * Math.floor(this.score / 100), this.difficulty));
   }
 
   newBullet(): void {
-    this.bulletList.push(new Bullet(10, 2, this.player.x + 14, this.player.y, this.difficulty * 2.5));
+    this.bulletList.push(new Bullet(10, 2, this.player.x + 14, this.player.y, this.difficulty * 4));
   }
 
   dead() {
@@ -137,7 +137,7 @@ export class GameComponent implements OnInit {
       }
     });
 
-    if(this.canvasCounter % 50 == 0) {
+    if(this.canvasCounter % (100 / this.difficulty) == 0) {
       this.newUfo();
     }
 
@@ -200,7 +200,7 @@ export class GameComponent implements OnInit {
     } else if(event.key === ' ' || event.key === 'Enter') {
       this.controls.shoot = false;
     } else if(event.key === 'Shift') {
-      this.controls.sprint = 1;
+      this.controls.sprint = 2;
       this.player.dx = Math.max(-this.player.speed, Math.min(this.player.speed, this.player.dx));
       this.player.dy = Math.max(-this.player.speed, Math.min(this.player.speed, this.player.dy));
     }
