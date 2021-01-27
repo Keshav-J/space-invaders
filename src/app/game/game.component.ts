@@ -1,4 +1,5 @@
 import { Component, OnInit, HostListener, EventEmitter, Output, ElementRef, ViewChild } from '@angular/core';
+import { Bullet } from '../core/bullet';
 import { Player } from '../core/player';
 import { Ufo } from '../core/ufo';
 
@@ -15,6 +16,7 @@ export class GameComponent implements OnInit {
 
   private player: Player;
   private ufoList: Ufo[];
+  private bulletList: Bullet[];
   
   private canvasCounter: number;
   
@@ -23,7 +25,8 @@ export class GameComponent implements OnInit {
     left: false,
     up: false,
     right: false,
-    down: false
+    down: false,
+    shoot: false
   };
 
   score: number = 0;
@@ -50,15 +53,21 @@ export class GameComponent implements OnInit {
 
   startNewLife() {
     this.player = new Player(20, 30, window.innerWidth / 2 - 15, window.innerHeight - 70, this.difficulty);
+    this.bulletList = [];
     this.ufoList = [];
   }
 
   newUfo(): void {
-    this.ufoList.push(new Ufo(30, 40, (Math.random()*(window.innerWidth*0.8) + window.innerWidth*0.05), -30, this.difficulty));
+    this.ufoList.push(new Ufo(30, 40, this.difficulty));
+  }
+
+  newBullet(): void {
+    this.bulletList.push(new Bullet(10, 2, this.player.x + 14, this.player.y, this.difficulty * 2));
   }
 
   dead() {
     // console.log('dead');
+    this.bulletList = [];
     this.ufoList = [];
     this.player = null;
     this.life--;
@@ -97,13 +106,7 @@ export class GameComponent implements OnInit {
     this.player.update(this.context);
 
     this.ufoList.forEach((ufo, i) => {
-      if(this.player.bullet.isFired && this.isCollided(ufo.y, ufo.y+ufo.height, ufo.x, ufo.x+ufo.width,
-          this.player.bullet.y, this.player.bullet.y+this.player.bullet.height, this.player.bullet.x, this.player.bullet.x+this.player.bullet.width)) {
-        // console.log('hit');
-        this.ufoList.splice(i, 1);
-        this.score += 5.5 * this.difficulty;
-        this.player.bullet.isFired = false;
-      } else if(this.isCollided(ufo.y, ufo.y+ufo.height, ufo.x, ufo.x+ufo.width,
+      if(this.isCollided(ufo.y, ufo.y+ufo.height, ufo.x, ufo.x+ufo.width,
           this.player.y, this.player.y+this.player.height, this.player.x, this.player.x+this.player.width)) {
         // console.log('collision');
         this.dead();
@@ -111,6 +114,25 @@ export class GameComponent implements OnInit {
         ufo.update(this.context);
       } else {
         this.ufoList.splice(i, 1);
+      }
+    });
+
+    this.bulletList.forEach((bullet, i) => {
+      this.ufoList.forEach((ufo, j) => {
+        if(this.isCollided(ufo.y, ufo.y+ufo.height, ufo.x, ufo.x+ufo.width,
+            bullet.y, bullet.y+bullet.height, bullet.x, bullet.x+bullet.width)) {
+          // console.log('hit');
+          this.controls.shoot = false;
+          this.score += this.difficulty;
+          this.bulletList.splice(i, 1);
+          this.ufoList.splice(j, 1);
+        }
+      });
+
+      if(0 < bullet.y + bullet.height) {
+        bullet.update(this.context);
+      } else {
+        this.bulletList.splice(i, 1);
       }
     });
 
@@ -125,7 +147,7 @@ export class GameComponent implements OnInit {
   moveUp(): void    { this.player.dy = -this.player.speed; }
   moveRight(): void { this.player.dx = this.player.speed; }
   moveDown(): void  { this.player.dy = this.player.speed; }
-
+  
   resetX(): void { this.player.dx = 0; }
   resetY(): void { this.player.dy = 0; }
 
@@ -143,8 +165,11 @@ export class GameComponent implements OnInit {
     } else if(event.key === 'ArrowDown' || event.key === 's') {
       this.controls.down = true;
       this.moveDown();
-    } else if(event.key === ' ' || event.key === 'Enter')
-      this.player.fireBullet(this.player.x + 14, this.player.y);
+    } else if(event.key === ' ' || event.key === 'Enter') {
+      if(!this.controls.shoot && this.bulletList.length < 5)
+        this.newBullet();
+      this.controls.shoot = true;
+    }
   }
 
   @HostListener('document:keyup', ['$event'])
@@ -165,6 +190,8 @@ export class GameComponent implements OnInit {
       this.controls.down = false;
       if(this.controls.up)    this.moveUp();
       else                    this.resetY();
+    } else if(event.key === ' ' || event.key === 'Enter') {
+      this.controls.shoot = false;
     }
   }
 

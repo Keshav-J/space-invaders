@@ -9,13 +9,11 @@ export class Ufo {
   
     constructor(height: number,
                 width: number,
-                x: number,
-                y: number,
                 dy: number) {
         this.height = height;
         this.width = width;
-        this.x = x;
-        this.y = y;
+        this.x = (Math.random()*(window.innerWidth*0.8) + window.innerWidth*0.05);
+        this.y = -this.height;
         this.dy = dy;
         this.ref = document.getElementById('ufo') as HTMLImageElement;
     }

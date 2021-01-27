@@ -5,7 +5,6 @@ export class Bullet {
     y: number;
     dy: number;
     ref: HTMLImageElement;
-    isFired: boolean;
   
     constructor(height: number,
                 width: number,
@@ -18,7 +17,6 @@ export class Bullet {
         this.y = y;
         this.dy = dy;
         this.ref = document.getElementById('bullet') as HTMLImageElement;
-        this.isFired = false;
     }
   
     draw(context: CanvasRenderingContext2D): void {
@@ -26,14 +24,8 @@ export class Bullet {
     }
   
     update(context: CanvasRenderingContext2D): void {
-        if(this.isFired) {
-            this.draw(context);
-    
-            if(0 < this.y + this.height - this.dy) {
-                this.y -= this.dy;
-            } else {
-                this.isFired = false;
-            }
-        }
+        this.draw(context);
+
+        this.y -= this.dy;
     }
 }
