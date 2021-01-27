@@ -7,6 +7,7 @@ export class Player {
     y: number;
     speed: number;
     dx: number;
+    dy: number;
     bullet: Bullet;
     ref: HTMLImageElement;
 
@@ -14,14 +15,14 @@ export class Player {
                 width: number,
                 x: number,
                 y: number,
-                speed: number,
-                dx: number) {
+                speed: number) {
         this.height = height;
         this.width = width;
         this.x = x;
         this.y = y;
-        this.speed = speed * speed;
-        this.dx = dx;
+        this.speed = Math.min(5, speed * 1.5);
+        this.dx = 0;
+        this.dy = 0;
         this.bullet = new Bullet(10, 2, this.x + 14, this.y, speed * 2);
         this.ref = document.getElementById('player') as HTMLImageElement;
     }
@@ -44,6 +45,9 @@ export class Player {
 
         if(25 < (this.x + this.dx) && ((this.x+this.width) + this.dx) < (window.innerWidth - 25)) {
             this.x += this.dx;
+        }
+        if(30 < (this.y + this.dy) && ((this.y + this.dy) < (window.innerHeight - 70))) {
+            this.y += this.dy;
         }
     }
 }

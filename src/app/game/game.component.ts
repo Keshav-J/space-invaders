@@ -15,11 +15,17 @@ export class GameComponent implements OnInit {
 
   private player: Player;
   private ufoList: Ufo[];
-
-  private canvasCounter: number;
-
-  private difficulty: number = 2;
   
+  private canvasCounter: number;
+  
+  private difficulty: number = 2;
+  private controls = {
+    left: false,
+    up: false,
+    right: false,
+    down: false
+  };
+
   score: number = 0;
   life: number = 3;
 
@@ -30,7 +36,7 @@ export class GameComponent implements OnInit {
     this.canvas.nativeElement.width = window.innerWidth;
     this.context = this.canvas.nativeElement.getContext('2d');
 
-    this.canvasCounter = 0;
+    this.canvasCounter = 1;
 
     this.startNewGame();
     this.animate();
@@ -43,12 +49,12 @@ export class GameComponent implements OnInit {
   }
 
   startNewLife() {
-    this.player = new Player(20, 30, window.innerWidth / 2 - 15, window.innerHeight - 70, this.difficulty, 0);
+    this.player = new Player(20, 30, window.innerWidth / 2 - 15, window.innerHeight - 70, this.difficulty);
     this.ufoList = [];
   }
 
   newUfo(): void {
-    this.ufoList.push(new Ufo(30, 40, (Math.random()*(window.innerWidth*0.8) + window.innerWidth*0.05), 0, this.difficulty));
+    this.ufoList.push(new Ufo(30, 40, (Math.random()*(window.innerWidth*0.8) + window.innerWidth*0.05), -30, this.difficulty));
   }
 
   dead() {
@@ -66,8 +72,8 @@ export class GameComponent implements OnInit {
 
   initDifficulty() {
     var nums = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10'];
-    var x = prompt('Enter difficulty (1-9): ', '2');
-    if(x in nums)
+    var x = prompt('Enter difficulty (1-10): ', '2');
+    if(nums.includes(x))
       this.difficulty = parseInt(x);
     else
       this.difficulty = 2;
@@ -75,8 +81,8 @@ export class GameComponent implements OnInit {
 
   isCollided(aT, aB, aL, aR, bT, bB, bL, bR) {
     if(((aT <= bT && bT <= aB) && ((aL <= bL && bL <= aR) || (aL <= bR && bR <= aR)))
-    || ((aT <= bB && bB <= aB) && ((aL <= bL && bL <= aR) || (aL <= bR && bR <= aR))))
-    return true;
+      || ((aT <= bB && bB <= aB) && ((aL <= bL && bL <= aR) || (aL <= bR && bR <= aR))))
+      return true;
     return false;
   }
 
@@ -89,15 +95,16 @@ export class GameComponent implements OnInit {
     this.canvasCounter++;
 
     this.player.update(this.context);
+
     this.ufoList.forEach((ufo, i) => {
       if(this.player.bullet.isFired && this.isCollided(ufo.y, ufo.y+ufo.height, ufo.x, ufo.x+ufo.width,
           this.player.bullet.y, this.player.bullet.y+this.player.bullet.height, this.player.bullet.x, this.player.bullet.x+this.player.bullet.width)) {
         // console.log('hit');
         this.ufoList.splice(i, 1);
-        this.score += 5.5*this.difficulty;
+        this.score += 5.5 * this.difficulty;
         this.player.bullet.isFired = false;
       } else if(this.isCollided(ufo.y, ufo.y+ufo.height, ufo.x, ufo.x+ufo.width,
-                          this.player.y, this.player.y+this.player.height, this.player.x, this.player.x+this.player.width)) {
+          this.player.y, this.player.y+this.player.height, this.player.x, this.player.x+this.player.width)) {
         // console.log('collision');
         this.dead();
       } else if(ufo.y < window.innerHeight - 70) {
@@ -114,20 +121,51 @@ export class GameComponent implements OnInit {
     requestAnimationFrame(this.animate.bind(this));
   }
 
+  moveLeft(): void  { this.player.dx = -this.player.speed; }
+  moveUp(): void    { this.player.dy = -this.player.speed; }
+  moveRight(): void { this.player.dx = this.player.speed; }
+  moveDown(): void  { this.player.dy = this.player.speed; }
+
+  resetX(): void { this.player.dx = 0; }
+  resetY(): void { this.player.dy = 0; }
+
   @HostListener('document:keydown', ['$event'])
   keyDown(event: KeyboardEvent) {
-    if((event.key === 'ArrowRight' || event.key === 'd') && (this.player.x+30) < (window.innerWidth-30))
-      this.player.dx = 5;
-    else if((event.key === 'ArrowLeft' || event.key === 'a') && this.player.x > 30)
-      this.player.dx = -5;
-    else if(event.key === ' ')
+    if(event.key === 'ArrowLeft' || event.key === 'a') {
+      this.controls.left = true;
+      this.moveLeft();
+    } else if(event.key === 'ArrowUp' || event.key === 'w') {
+      this.controls.up = true;
+      this.moveUp();
+    } else if(event.key === 'ArrowRight' || event.key === 'd') {
+      this.controls.right = true;
+      this.moveRight();
+    } else if(event.key === 'ArrowDown' || event.key === 's') {
+      this.controls.down = true;
+      this.moveDown();
+    } else if(event.key === ' ' || event.key === 'Enter')
       this.player.fireBullet(this.player.x + 14, this.player.y);
   }
 
   @HostListener('document:keyup', ['$event'])
   keyUp(event: KeyboardEvent) {
-    if(['ArrowRight', 'd', 'ArrowLeft', 'a'].includes(event.key))
-      this.player.dx = 0;
+    if(event.key === 'ArrowLeft' || event.key === 'a') {
+      this.controls.left = false;
+      if(this.controls.right) this.moveRight();
+      else                    this.resetX();
+    } else if(event.key === 'ArrowUp' || event.key === 'w') {
+      this.controls.up = false;
+      if(this.controls.down)  this.moveDown();
+      else                    this.resetY();
+    } else if(event.key === 'ArrowRight' || event.key === 'd') {
+      this.controls.right = false;
+      if(this.controls.left)  this.moveLeft();
+      else                    this.resetX();
+    } else if(event.key === 'ArrowDown' || event.key === 's') {
+      this.controls.down = false;
+      if(this.controls.up)    this.moveUp();
+      else                    this.resetY();
+    }
   }
 
   @HostListener('window:resize', ['$event'])
