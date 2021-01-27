@@ -1,5 +1,4 @@
 #canvas {
-  background-color: #1e1f26;
   position: absolute;
 }
 #player, #bullet, #ufo {
@@ -18,9 +17,11 @@
 }
 
 .ground {
+  background-image: url('src/assets/game/moving_stars.gif');
   position: absolute;
-  bottom: 40px;
-  left: 30px;
+  height: 40px;
+  width: 100vw;
+  bottom: 0px;
 }
 .mat-divider {
   border-top-color: #00fc00;
@@ -30,7 +31,8 @@
   font-family: Korean Looks;
   position: absolute;
   color: #00fc00;
-  bottom: 10px;
   right: 40px;
   font-weight: bold;
+  top: 50%;
+  transform: translateY(-50%);
 }

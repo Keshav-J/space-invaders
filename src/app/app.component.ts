@@ -20,6 +20,7 @@ export class AppComponent {
 
   ngOnInit() {
     this.getHighScores();
+    this.play();
   }
 
   getHighScores() {

@@ -19,6 +19,7 @@ export class Ufo {
     }
   
     draw(context: CanvasRenderingContext2D): void {
+        if(!this.ref) return;
         context.drawImage(this.ref, this.x, this.y, this.width, this.height);
     }
   

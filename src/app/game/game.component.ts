@@ -10,7 +10,7 @@ import { Ufo } from '../core/ufo';
 })
 export class GameComponent implements OnInit {
 
-  @ViewChild('canvas', { static: true }) 
+  @ViewChild('canvas', { static: true })
   private canvas: ElementRef<HTMLCanvasElement>;
   private context: CanvasRenderingContext2D;
 
@@ -21,12 +21,14 @@ export class GameComponent implements OnInit {
   private canvasCounter: number;
   
   private difficulty: number = 2;
+  private sprintSpeed: number = 1.5;
   private controls = {
     left: false,
     up: false,
     right: false,
     down: false,
-    shoot: false
+    shoot: false,
+    sprint: 1
   };
 
   score: number = 0;
@@ -62,14 +64,13 @@ export class GameComponent implements OnInit {
   }
 
   newBullet(): void {
-    this.bulletList.push(new Bullet(10, 2, this.player.x + 14, this.player.y, this.difficulty * 2));
+    this.bulletList.push(new Bullet(10, 2, this.player.x + 14, this.player.y, this.difficulty * 2.5));
   }
 
   dead() {
     // console.log('dead');
     this.bulletList = [];
     this.ufoList = [];
-    this.player = null;
     this.life--;
 
     if(this.life < 1) {
@@ -81,7 +82,7 @@ export class GameComponent implements OnInit {
 
   initDifficulty() {
     var nums = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10'];
-    var x = prompt('Enter difficulty (1-10): ', '2');
+    var x = '2';//prompt('Enter difficulty (1-10): ', '2');
     if(nums.includes(x))
       this.difficulty = parseInt(x);
     else
@@ -110,7 +111,7 @@ export class GameComponent implements OnInit {
           this.player.y, this.player.y+this.player.height, this.player.x, this.player.x+this.player.width)) {
         // console.log('collision');
         this.dead();
-      } else if(ufo.y < window.innerHeight - 70) {
+      } else if(ufo.y < window.innerHeight - 40) {
         ufo.update(this.context);
       } else {
         this.ufoList.splice(i, 1);
@@ -143,10 +144,10 @@ export class GameComponent implements OnInit {
     requestAnimationFrame(this.animate.bind(this));
   }
 
-  moveLeft(): void  { this.player.dx = -this.player.speed; }
-  moveUp(): void    { this.player.dy = -this.player.speed; }
-  moveRight(): void { this.player.dx = this.player.speed; }
-  moveDown(): void  { this.player.dy = this.player.speed; }
+  moveLeft(): void  { this.player.dx = -this.controls.sprint * this.player.speed; }
+  moveUp(): void    { this.player.dy = -this.controls.sprint * this.player.speed; }
+  moveRight(): void { this.player.dx = this.controls.sprint * this.player.speed; }
+  moveDown(): void  { this.player.dy = this.controls.sprint * this.player.speed; }
   
   resetX(): void { this.player.dx = 0; }
   resetY(): void { this.player.dy = 0; }
@@ -169,6 +170,12 @@ export class GameComponent implements OnInit {
       if(!this.controls.shoot && this.bulletList.length < 5)
         this.newBullet();
       this.controls.shoot = true;
+    } else if(event.key === 'Shift') {
+      this.controls.sprint = this.sprintSpeed;
+      this.player.dx = Math.max(-this.sprintSpeed*this.player.speed,
+                                Math.min(this.sprintSpeed*this.player.speed, this.sprintSpeed*this.player.dx));
+      this.player.dy = Math.max(-this.sprintSpeed*this.player.speed,
+                                Math.min(this.sprintSpeed*this.player.speed, this.sprintSpeed*this.player.dy));
     }
   }
 
@@ -192,6 +199,10 @@ export class GameComponent implements OnInit {
       else                    this.resetY();
     } else if(event.key === ' ' || event.key === 'Enter') {
       this.controls.shoot = false;
+    } else if(event.key === 'Shift') {
+      this.controls.sprint = 1;
+      this.player.dx = Math.max(-this.player.speed, Math.min(this.player.speed, this.player.dx));
+      this.player.dy = Math.max(-this.player.speed, Math.min(this.player.speed, this.player.dy));
     }
   }
 
