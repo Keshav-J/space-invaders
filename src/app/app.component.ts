@@ -67,7 +67,6 @@ export class AppComponent {
   }
 
   showLeaderBoard() {
-    this.getHighScores();
     this.isGame = false;
     this.isSaveScore = false;
     setTimeout(() => {
@@ -88,7 +87,9 @@ export class AppComponent {
 
     if(this.highscores.length<10 || (this.curScore >= this.highscores[this.highscores.length-1].score))
       this.getName();
-    else
+    else {
+      this.getHighScores();
       this.showLeaderBoard();
+    }
   }
 }
