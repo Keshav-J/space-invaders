@@ -5,7 +5,7 @@ export class Bullet {
     y: number;
     dy: number;
     ref: HTMLImageElement;
-  
+
     constructor(height: number,
                 width: number,
                 x: number,
@@ -18,11 +18,11 @@ export class Bullet {
         this.dy = Math.min(25, dy);
         this.ref = document.getElementById('bullet') as HTMLImageElement;
     }
-  
+
     draw(context: CanvasRenderingContext2D): void {
         context.drawImage(this.ref, this.x, this.y, this.width, this.height);
     }
-  
+
     update(context: CanvasRenderingContext2D): void {
         this.draw(context);
 

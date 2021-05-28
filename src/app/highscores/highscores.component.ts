@@ -1,4 +1,4 @@
-import { Component, OnInit, EventEmitter, Output, Input } from "@angular/core";
+import { Component, OnInit, EventEmitter, Output, Input } from '@angular/core';
 
 @Component({
   selector: 'app-highscores',
@@ -8,16 +8,16 @@ import { Component, OnInit, EventEmitter, Output, Input } from "@angular/core";
 export class HighscoresComponent implements OnInit {
   @Input() scores = [];
 
-  @Output() onPlay = new EventEmitter();
+  @Output() playEvent = new EventEmitter<void>();
 
-  isInstructions: boolean = false;
+  isInstructions = false;
 
   ngOnInit() {
 
   }
 
-  play():void {
-    this.onPlay.emit();
+  play(): void {
+    this.playEvent.emit();
   }
 
   toggle(): void {

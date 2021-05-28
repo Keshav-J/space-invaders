@@ -30,14 +30,14 @@ export class Player {
     update(context: CanvasRenderingContext2D): void {
         this.draw(context);
 
-        if(this.x + this.width/2 < 0) {
-            this.x = window.innerWidth - this.width/2;
-        } else if(window.innerWidth < this.x + this.width/2) {
-            this.x = -this.width/2;
+        if (this.x + this.width / 2 < 0) {
+            this.x = window.innerWidth - this.width / 2;
+        } else if (window.innerWidth < this.x + this.width / 2) {
+            this.x = -this.width / 2;
         }
 
         this.x += this.dx;
-        if(this.dy < 0) {
+        if (this.dy < 0) {
             this.y = Math.max(30, this.y + this.dy);
         } else {
             this.y = Math.min(window.innerHeight - 70, this.y + this.dy);

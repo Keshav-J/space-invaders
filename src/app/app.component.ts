@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 
 @Component({
@@ -6,11 +6,11 @@ import { HttpClient } from '@angular/common/http';
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.css']
 })
-export class AppComponent {
-  title:string = 'space-invaders';
-  isGame:Boolean = false;
-  isHighscores:Boolean = true;
-  isSaveScore:Boolean = false;
+export class AppComponent implements OnInit {
+  title = 'space-invaders';
+  isGame = false;
+  isHighscores = true;
+  isSaveScore = false;
 
   highscores = [];
   curScore = 0;
@@ -82,11 +82,12 @@ export class AppComponent {
     this.showLeaderBoard();
   }
 
-  checkScores(score:number) {
+  checkScores(score: number) {
     this.curScore = score;
 
-    if(this.highscores.length<10 || (this.curScore >= this.highscores[this.highscores.length-1].score))
+    if (this.highscores.length < 10 || (this.curScore >= this.highscores[this.highscores.length - 1].score)) {
       this.getName();
+    }
     else {
       this.getHighScores();
       this.showLeaderBoard();

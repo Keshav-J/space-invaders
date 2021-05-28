@@ -1,4 +1,4 @@
-import { Component, OnInit, EventEmitter, Output, Input } from "@angular/core";
+import { Component, OnInit, EventEmitter, Output, Input } from '@angular/core';
 
 @Component({
   selector: 'app-save-score',
@@ -6,18 +6,19 @@ import { Component, OnInit, EventEmitter, Output, Input } from "@angular/core";
   styleUrls: ['./save-score.component.css']
 })
 export class SaveScoreComponent implements OnInit {
-  name:string = '';
+  name = '';
 
-  @Input() score:number = 0;
+  @Input() score = 0;
 
-  @Output() onSave = new EventEmitter;
+  @Output() saveEvent = new EventEmitter<string>();
 
   ngOnInit() {
 
   }
 
   submit() {
-    if(this.name)
-      this.onSave.emit(this.name);
+    if (this.name) {
+      this.saveEvent.emit(this.name);
+    }
   }
 }
