@@ -1,15 +1,15 @@
 import {
   Component,
-  OnInit,
-  HostListener,
-  EventEmitter,
-  Output,
   ElementRef,
+  HostListener,
+  OnInit,
   ViewChild,
 } from '@angular/core';
-import { Bullet } from '../core/bullet';
-import { Player } from '../core/player';
-import { Ufo } from '../core/ufo';
+import { Router } from '@angular/router';
+import { Bullet } from 'src/app/core/models/bullet';
+import { Player } from 'src/app/core/models/player';
+import { Ufo } from 'src/app/core/models/ufo';
+import { ScoresService } from 'src/app/core/services/scores/scores.service';
 
 @Component({
   selector: 'app-game',
@@ -42,9 +42,9 @@ export class GameComponent implements OnInit {
   life = 3;
   level = -1;
 
-  @Output() gameOverEvent = new EventEmitter<number>();
+  constructor(private scoresService: ScoresService, private router: Router) {}
 
-  ngOnInit() {
+  ngOnInit(): void {
     this.canvas.nativeElement.height = window.innerHeight;
     this.canvas.nativeElement.width = window.innerWidth;
     this.context = this.canvas.nativeElement.getContext('2d');
@@ -53,6 +53,10 @@ export class GameComponent implements OnInit {
 
     this.startNewGame();
     this.animate();
+
+    if (this.scoresService.getScores().length === 0) {
+      this.scoresService.getHighScores();
+    }
   }
 
   startNewGame() {
@@ -86,15 +90,20 @@ export class GameComponent implements OnInit {
   }
 
   dead() {
-    // console.log('dead');
     this.bulletList = [];
     this.ufoList = [];
     this.life--;
 
-    if (this.life < 1) {
-      this.gameOverEvent.emit(Math.ceil(this.score));
-    } else {
+    if (this.life >= 1) {
       this.startNewLife();
+      return;
+    }
+
+    if (this.scoresService.checkHighScore(this.score)) {
+      this.scoresService.setIsNewHighScore(true);
+      this.router.navigate(['save']);
+    } else {
+      this.router.navigate(['highscores']);
     }
   }
 
@@ -136,7 +145,6 @@ export class GameComponent implements OnInit {
     this.canvasCounter++;
 
     if (Math.floor(this.score / 100) > this.level) {
-      console.log('increase');
       this.level++;
       document.getElementById('level-banner').style.opacity = '1';
       setTimeout(() => {
@@ -158,7 +166,6 @@ export class GameComponent implements OnInit {
           this.player.x + this.player.width
         )
       ) {
-        // console.log('collision');
         this.dead();
       } else if (ufo.y < window.innerHeight - 40) {
         ufo.update(this.context);
@@ -181,7 +188,6 @@ export class GameComponent implements OnInit {
             bullet.x + bullet.width
           )
         ) {
-          // console.log('hit');
           this.controls.shoot = false;
           this.score += this.difficulty;
           this.bulletList.splice(i, 1);
@@ -308,7 +314,6 @@ export class GameComponent implements OnInit {
 
   @HostListener('window:resize', ['$event'])
   resize(event: Event) {
-    console.log('resize');
     const ratio = this.player.x / this.canvas.nativeElement.width;
     this.canvas.nativeElement.height = window.innerHeight;
     this.canvas.nativeElement.width = window.innerWidth;
