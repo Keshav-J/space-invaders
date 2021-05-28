@@ -1,9 +1,9 @@
-export interface User {
+export interface IUser {
   name: string;
   score: number;
 }
 
-export interface Score {
+export interface IScore {
   _id: number;
   name: string;
   score: number;

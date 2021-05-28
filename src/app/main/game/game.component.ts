@@ -2,11 +2,13 @@ import {
   Component,
   ElementRef,
   HostListener,
+  OnDestroy,
   OnInit,
   ViewChild,
 } from '@angular/core';
 import { Router } from '@angular/router';
 import { take } from 'rxjs/operators';
+import { ROUTES } from 'src/app/core/constants/urlconstants';
 import { Bullet } from 'src/app/core/models/bullet';
 import { Player } from 'src/app/core/models/player';
 import { Ufo } from 'src/app/core/models/ufo';
@@ -17,7 +19,7 @@ import { ScoresService } from 'src/app/core/services/scores/scores.service';
   templateUrl: './game.component.html',
   styleUrls: ['./game.component.scss'],
 })
-export class GameComponent implements OnInit {
+export class GameComponent implements OnInit, OnDestroy {
   @ViewChild('canvas', { static: true })
   private canvas: ElementRef<HTMLCanvasElement>;
   private context: CanvasRenderingContext2D;
@@ -43,7 +45,7 @@ export class GameComponent implements OnInit {
   life = 3;
   level = -1;
 
-  isGameOver = false;
+  isDestroyed = false;
 
   constructor(private scoresService: ScoresService, private router: Router) {}
 
@@ -102,13 +104,11 @@ export class GameComponent implements OnInit {
       return;
     }
 
-    this.isGameOver = true;
-
     if (this.scoresService.checkHighScore(this.score)) {
       this.scoresService.setIsNewHighScore(true);
-      this.router.navigate(['save']);
+      this.router.navigate([ROUTES.SAVE_SCORES]);
     } else {
-      this.router.navigate(['highscores']);
+      this.router.navigate([ROUTES.HIGHSCORES]);
     }
   }
 
@@ -211,7 +211,7 @@ export class GameComponent implements OnInit {
       this.newUfo();
     }
 
-    if (!this.isGameOver) {
+    if (!this.isDestroyed) {
       requestAnimationFrame(this.animate.bind(this));
     }
   }
@@ -328,5 +328,9 @@ export class GameComponent implements OnInit {
       Math.max(30, ratio * this.canvas.nativeElement.width),
       window.innerWidth - 30 - this.player.width
     );
+  }
+
+  ngOnDestroy(): void {
+    this.isDestroyed = true;
   }
 }

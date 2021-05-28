@@ -1,6 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { take } from 'rxjs/operators';
-import { Score } from 'src/app/core/models/models';
+import { DScores } from 'src/app/core/constants/defaults';
+import { ROUTES } from 'src/app/core/constants/urlconstants';
+import { IScore } from 'src/app/core/models/models';
 import { ScoresService } from 'src/app/core/services/scores/scores.service';
 
 @Component({
@@ -9,8 +11,9 @@ import { ScoresService } from 'src/app/core/services/scores/scores.service';
   styleUrls: ['./highscores.component.scss'],
 })
 export class HighscoresComponent implements OnInit {
-  scores: Score[] = [];
+  scores: IScore[] = DScores;
   isInstructions = false;
+  gameRoute = ROUTES.GAME;
 
   constructor(private scoresService: ScoresService) {}
 
@@ -19,7 +22,7 @@ export class HighscoresComponent implements OnInit {
     this.scoresService
       .getHighScores()
       .pipe(take(1))
-      .subscribe((scores: Score[]) => {
+      .subscribe((scores: IScore[]) => {
         this.scores = scores;
       });
   }

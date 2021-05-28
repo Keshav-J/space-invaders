@@ -3,35 +3,39 @@ import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { environment } from 'src/environments/environment';
-import { Score, User } from '../../models/models';
+import { DScores } from '../../constants/defaults';
+import { routeConstants } from '../../constants/routeConstants';
+import { IScore, IUser } from '../../models/models';
 import { UserService } from '../user/user.service';
 
 @Injectable({
   providedIn: 'root',
 })
 export class ScoresService {
-  private scores: Score[] = [];
+  private scores: IScore[] = DScores;
   private isNewHighScore = false;
 
   constructor(private http: HttpClient, private userService: UserService) {}
 
-  getHighScores(): Observable<Score[]> {
-    return this.http.get<Score[]>(`${environment.baseURL}/getScores/`, {}).pipe(
-      map((response) => {
-        this.scores = response;
-        return response;
-      })
-    );
+  getHighScores(): Observable<IScore[]> {
+    return this.http
+      .get<IScore[]>(environment.baseURL + routeConstants.getScores, {})
+      .pipe(
+        map((response) => {
+          this.scores = response;
+          return response;
+        })
+      );
   }
 
-  updateHighscores(): Observable<Score[]> {
-    const currentUser: User = this.userService.getUser();
+  updateHighscores(): Observable<IScore[]> {
+    const currentUser: IUser = this.userService.getUser();
     const params = {
       name: currentUser.name,
       score: currentUser.score,
     };
     return this.http
-      .put<Score[]>(`${environment.baseURL}/setScores/`, params)
+      .put<IScore[]>(environment.baseURL + routeConstants.setScores, params)
       .pipe(
         map((response) => {
           this.scores = response;
@@ -52,7 +56,7 @@ export class ScoresService {
     return false;
   }
 
-  getScores(): Score[] {
+  getScores(): IScore[] {
     return this.scores;
   }
 

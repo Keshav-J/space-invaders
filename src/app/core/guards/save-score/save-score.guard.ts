@@ -7,6 +7,7 @@ import {
   Router,
 } from '@angular/router';
 import { Observable } from 'rxjs';
+import { ROUTES } from '../../constants/urlconstants';
 import { ScoresService } from '../../services/scores/scores.service';
 
 @Injectable({
@@ -26,7 +27,7 @@ export class SaveScoreGuard implements CanActivate {
     const isNewHighScore = this.scoresService.getIsNewHighScore();
 
     if (!isNewHighScore) {
-      return this.router.createUrlTree(['highscores']);
+      return this.router.createUrlTree([ROUTES.HIGHSCORES]);
     }
 
     return true;
