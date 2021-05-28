@@ -19,6 +19,17 @@
     "build:server:prod": "webpack --config webpack.server.config.js --progress --colors",
     "build:server:serverless": "webpack --config webpack.server.config.js --progress --colors"
   },
+  "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged && ng lint"
+    }
+  },
+  "lint-staged": {
+    "*": [
+      "prettier --write",
+      "git add -A ."
+    ]
+  },
   "private": true,
   "dependencies": {
     "@angular/animations": "^10.2.4",
@@ -47,6 +58,7 @@
     "@types/jasminewd2": "~2.0.3",
     "@types/node": "^12.19.14",
     "codelyzer": "^5.1.2",
+    "husky": "^4.2.3",
     "jasmine-core": "~3.5.0",
     "jasmine-spec-reporter": "~5.0.0",
     "karma": "~5.0.0",
@@ -54,7 +66,9 @@
     "karma-coverage-istanbul-reporter": "~3.0.2",
     "karma-jasmine": "~4.0.0",
     "karma-jasmine-html-reporter": "^1.5.0",
+    "lint-staged": "^11.0.0",
     "opencollective": "^1.0.3",
+    "prettier": "^2.3.0",
     "protractor": "~7.0.0",
     "ts-loader": "^6.2.1",
     "ts-node": "~8.3.0",
