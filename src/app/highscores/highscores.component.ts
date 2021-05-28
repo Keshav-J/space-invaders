@@ -3,7 +3,7 @@ import { Component, OnInit, EventEmitter, Output, Input } from '@angular/core';
 @Component({
   selector: 'app-highscores',
   templateUrl: './highscores.component.html',
-  styleUrls: ['./highscores.component.css']
+  styleUrls: ['./highscores.component.scss'],
 })
 export class HighscoresComponent implements OnInit {
   @Input() scores = [];
@@ -12,9 +12,7 @@ export class HighscoresComponent implements OnInit {
 
   isInstructions = false;
 
-  ngOnInit() {
-
-  }
+  ngOnInit() {}
 
   play(): void {
     this.playEvent.emit();

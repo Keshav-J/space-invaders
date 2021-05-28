@@ -1,4 +1,12 @@
-import { Component, OnInit, HostListener, EventEmitter, Output, ElementRef, ViewChild } from '@angular/core';
+import {
+  Component,
+  OnInit,
+  HostListener,
+  EventEmitter,
+  Output,
+  ElementRef,
+  ViewChild,
+} from '@angular/core';
 import { Bullet } from '../core/bullet';
 import { Player } from '../core/player';
 import { Ufo } from '../core/ufo';
@@ -6,10 +14,9 @@ import { Ufo } from '../core/ufo';
 @Component({
   selector: 'app-game',
   templateUrl: './game.component.html',
-  styleUrls: ['./game.component.css']
+  styleUrls: ['./game.component.scss'],
 })
 export class GameComponent implements OnInit {
-
   @ViewChild('canvas', { static: true })
   private canvas: ElementRef<HTMLCanvasElement>;
   private context: CanvasRenderingContext2D;
@@ -28,7 +35,7 @@ export class GameComponent implements OnInit {
     right: false,
     down: false,
     shoot: false,
-    sprint: 1
+    sprint: 1,
   };
 
   score = 0;
@@ -55,17 +62,27 @@ export class GameComponent implements OnInit {
   }
 
   startNewLife() {
-    this.player = new Player(20, 30, window.innerWidth / 2 - 15, window.innerHeight - 70, this.difficulty);
+    this.player = new Player(
+      20,
+      30,
+      window.innerWidth / 2 - 15,
+      window.innerHeight - 70,
+      this.difficulty
+    );
     this.bulletList = [];
     this.ufoList = [];
   }
 
   newUfo(): void {
-    this.ufoList.push(new Ufo(30, 40, this.difficulty * this.level, this.difficulty));
+    this.ufoList.push(
+      new Ufo(30, 40, this.difficulty * this.level, this.difficulty)
+    );
   }
 
   newBullet(): void {
-    this.bulletList.push(new Bullet(10, 2, this.player.x + 14, this.player.y, this.difficulty * 4));
+    this.bulletList.push(
+      new Bullet(10, 2, this.player.x + 14, this.player.y, this.difficulty * 4)
+    );
   }
 
   dead() {
@@ -86,22 +103,32 @@ export class GameComponent implements OnInit {
     const x = prompt('Enter difficulty (1-10): ', '2');
     if (nums.includes(x)) {
       this.difficulty = parseInt(x, 10);
-    }
-    else {
+    } else {
       this.difficulty = 2;
     }
   }
 
   isCollided(aT, aB, aL, aR, bT, bB, bL, bR) {
-    if (((aT <= bT && bT <= aB) && ((aL <= bL && bL <= aR) || (aL <= bR && bR <= aR)))
-      || ((aT <= bB && bB <= aB) && ((aL <= bL && bL <= aR) || (aL <= bR && bR <= aR)))) {
+    if (
+      (aT <= bT &&
+        bT <= aB &&
+        ((aL <= bL && bL <= aR) || (aL <= bR && bR <= aR))) ||
+      (aT <= bB &&
+        bB <= aB &&
+        ((aL <= bL && bL <= aR) || (aL <= bR && bR <= aR)))
+    ) {
       return true;
     }
     return false;
   }
 
   clear(): void {
-    this.context.clearRect(0, 0, this.canvas.nativeElement.width, this.canvas.nativeElement.height);
+    this.context.clearRect(
+      0,
+      0,
+      this.canvas.nativeElement.width,
+      this.canvas.nativeElement.height
+    );
   }
 
   animate() {
@@ -119,8 +146,18 @@ export class GameComponent implements OnInit {
     this.player.update(this.context);
 
     this.ufoList.forEach((ufo, i) => {
-      if (this.isCollided(ufo.y, ufo.y + ufo.height, ufo.x, ufo.x + ufo.width,
-        this.player.y, this.player.y + this.player.height, this.player.x, this.player.x + this.player.width)) {
+      if (
+        this.isCollided(
+          ufo.y,
+          ufo.y + ufo.height,
+          ufo.x,
+          ufo.x + ufo.width,
+          this.player.y,
+          this.player.y + this.player.height,
+          this.player.x,
+          this.player.x + this.player.width
+        )
+      ) {
         // console.log('collision');
         this.dead();
       } else if (ufo.y < window.innerHeight - 40) {
@@ -132,8 +169,18 @@ export class GameComponent implements OnInit {
 
     this.bulletList.forEach((bullet, i) => {
       this.ufoList.forEach((ufo, j) => {
-        if (this.isCollided(ufo.y, ufo.y + ufo.height, ufo.x, ufo.x + ufo.width,
-            bullet.y, bullet.y + bullet.height, bullet.x, bullet.x + bullet.width)) {
+        if (
+          this.isCollided(
+            ufo.y,
+            ufo.y + ufo.height,
+            ufo.x,
+            ufo.x + ufo.width,
+            bullet.y,
+            bullet.y + bullet.height,
+            bullet.x,
+            bullet.x + bullet.width
+          )
+        ) {
           // console.log('hit');
           this.controls.shoot = false;
           this.score += this.difficulty;
@@ -156,13 +203,25 @@ export class GameComponent implements OnInit {
     requestAnimationFrame(this.animate.bind(this));
   }
 
-  moveLeft(): void  { this.player.dx = -this.controls.sprint * this.player.speed; }
-  moveUp(): void    { this.player.dy = -this.controls.sprint * this.player.speed; }
-  moveRight(): void { this.player.dx = this.controls.sprint * this.player.speed; }
-  moveDown(): void  { this.player.dy = this.controls.sprint * this.player.speed; }
+  moveLeft(): void {
+    this.player.dx = -this.controls.sprint * this.player.speed;
+  }
+  moveUp(): void {
+    this.player.dy = -this.controls.sprint * this.player.speed;
+  }
+  moveRight(): void {
+    this.player.dx = this.controls.sprint * this.player.speed;
+  }
+  moveDown(): void {
+    this.player.dy = this.controls.sprint * this.player.speed;
+  }
 
-  resetX(): void { this.player.dx = 0; }
-  resetY(): void { this.player.dy = 0; }
+  resetX(): void {
+    this.player.dx = 0;
+  }
+  resetY(): void {
+    this.player.dy = 0;
+  }
 
   @HostListener('document:keydown', ['$event'])
   keyDown(event: KeyboardEvent) {
@@ -185,10 +244,20 @@ export class GameComponent implements OnInit {
       this.controls.shoot = true;
     } else if (event.key === 'Shift') {
       this.controls.sprint = this.sprintSpeed;
-      this.player.dx = Math.max(-this.sprintSpeed * this.player.speed,
-                                Math.min(this.sprintSpeed * this.player.speed, this.sprintSpeed * this.player.dx));
-      this.player.dy = Math.max(-this.sprintSpeed * this.player.speed,
-                                Math.min(this.sprintSpeed * this.player.speed, this.sprintSpeed * this.player.dy));
+      this.player.dx = Math.max(
+        -this.sprintSpeed * this.player.speed,
+        Math.min(
+          this.sprintSpeed * this.player.speed,
+          this.sprintSpeed * this.player.dx
+        )
+      );
+      this.player.dy = Math.max(
+        -this.sprintSpeed * this.player.speed,
+        Math.min(
+          this.sprintSpeed * this.player.speed,
+          this.sprintSpeed * this.player.dy
+        )
+      );
     }
   }
 
@@ -196,26 +265,44 @@ export class GameComponent implements OnInit {
   keyUp(event: KeyboardEvent) {
     if (event.key === 'ArrowLeft' || event.key === 'a') {
       this.controls.left = false;
-      if (this.controls.right) { this.moveRight(); }
-      else {                    this.resetX(); }
+      if (this.controls.right) {
+        this.moveRight();
+      } else {
+        this.resetX();
+      }
     } else if (event.key === 'ArrowUp' || event.key === 'w') {
       this.controls.up = false;
-      if (this.controls.down) {  this.moveDown(); }
-      else {                    this.resetY(); }
+      if (this.controls.down) {
+        this.moveDown();
+      } else {
+        this.resetY();
+      }
     } else if (event.key === 'ArrowRight' || event.key === 'd') {
       this.controls.right = false;
-      if (this.controls.left) {  this.moveLeft(); }
-      else {                    this.resetX(); }
+      if (this.controls.left) {
+        this.moveLeft();
+      } else {
+        this.resetX();
+      }
     } else if (event.key === 'ArrowDown' || event.key === 's') {
       this.controls.down = false;
-      if (this.controls.up) {    this.moveUp(); }
-      else {                    this.resetY(); }
+      if (this.controls.up) {
+        this.moveUp();
+      } else {
+        this.resetY();
+      }
     } else if (event.key === ' ' || event.key === 'Enter') {
       this.controls.shoot = false;
     } else if (event.key === 'Shift') {
       this.controls.sprint = 2;
-      this.player.dx = Math.max(-this.player.speed, Math.min(this.player.speed, this.player.dx));
-      this.player.dy = Math.max(-this.player.speed, Math.min(this.player.speed, this.player.dy));
+      this.player.dx = Math.max(
+        -this.player.speed,
+        Math.min(this.player.speed, this.player.dx)
+      );
+      this.player.dy = Math.max(
+        -this.player.speed,
+        Math.min(this.player.speed, this.player.dy)
+      );
     }
   }
 
@@ -225,7 +312,9 @@ export class GameComponent implements OnInit {
     const ratio = this.player.x / this.canvas.nativeElement.width;
     this.canvas.nativeElement.height = window.innerHeight;
     this.canvas.nativeElement.width = window.innerWidth;
-    this.player.x = Math.min(Math.max(30, ratio * this.canvas.nativeElement.width),
-                              window.innerWidth - 30 - this.player.width);
+    this.player.x = Math.min(
+      Math.max(30, ratio * this.canvas.nativeElement.width),
+      window.innerWidth - 30 - this.player.width
+    );
   }
 }

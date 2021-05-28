@@ -4,7 +4,7 @@ import { HttpClient } from '@angular/common/http';
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
-  styleUrls: ['./app.component.css']
+  styleUrls: ['./app.component.scss'],
 })
 export class AppComponent implements OnInit {
   title = 'space-invaders';
@@ -16,19 +16,20 @@ export class AppComponent implements OnInit {
   curScore = 0;
   curName = '';
 
-  constructor(private http: HttpClient) { }
+  constructor(private http: HttpClient) {}
 
   ngOnInit() {
     this.getHighScores();
   }
 
   getHighScores() {
-    this.http.get<any>(`https://mean-space-invaders.herokuapp.com/getScores/`, {})
+    this.http
+      .get<any>(`https://mean-space-invaders.herokuapp.com/getScores/`, {})
       .subscribe(
-        data => {
+        (data) => {
           this.highscores = data;
         },
-        error => {
+        (error) => {
           console.log(error.error.text);
         }
       );
@@ -37,15 +38,16 @@ export class AppComponent implements OnInit {
   updateHighscores() {
     const params = {
       name: this.curName,
-      score: this.curScore
+      score: this.curScore,
     };
 
-    this.http.put<any>(`https://mean-space-invaders.herokuapp.com/setScores/`, params)
+    this.http
+      .put<any>(`https://mean-space-invaders.herokuapp.com/setScores/`, params)
       .subscribe(
-        data => {
+        (data) => {
           this.highscores = data;
         },
-        error => {
+        (error) => {
           console.log(error.error.text);
         }
       );
@@ -55,7 +57,6 @@ export class AppComponent implements OnInit {
     this.isHighscores = false;
     setTimeout(() => {
       this.isGame = true;
-
     }, 50);
   }
 
@@ -85,10 +86,12 @@ export class AppComponent implements OnInit {
   checkScores(score: number) {
     this.curScore = score;
 
-    if (this.highscores.length < 10 || (this.curScore >= this.highscores[this.highscores.length - 1].score)) {
+    if (
+      this.highscores.length < 10 ||
+      this.curScore >= this.highscores[this.highscores.length - 1].score
+    ) {
       this.getName();
-    }
-    else {
+    } else {
       this.getHighScores();
       this.showLeaderBoard();
     }

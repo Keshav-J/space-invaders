@@ -3,7 +3,7 @@ import { Component, OnInit, EventEmitter, Output, Input } from '@angular/core';
 @Component({
   selector: 'app-save-score',
   templateUrl: './save-score.component.html',
-  styleUrls: ['./save-score.component.css']
+  styleUrls: ['./save-score.component.scss'],
 })
 export class SaveScoreComponent implements OnInit {
   name = '';
@@ -12,9 +12,7 @@ export class SaveScoreComponent implements OnInit {
 
   @Output() saveEvent = new EventEmitter<string>();
 
-  ngOnInit() {
-
-  }
+  ngOnInit() {}
 
   submit() {
     if (this.name) {
