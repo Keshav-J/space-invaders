@@ -1,4 +1,4 @@
 export const routeConstants = {
-  getScores: '/getScores',
-  setScores: '/setScores',
+  getScores: '/scores',
+  setScores: '/scores',
 };
