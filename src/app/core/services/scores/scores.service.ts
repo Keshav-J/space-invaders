@@ -2,6 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
+import { environment } from 'src/environments/environment';
 import { Score, User } from '../../models/models';
 import { UserService } from '../user/user.service';
 
@@ -15,14 +16,12 @@ export class ScoresService {
   constructor(private http: HttpClient, private userService: UserService) {}
 
   getHighScores(): Observable<Score[]> {
-    return this.http
-      .get<Score[]>(`https://mean-space-invaders.herokuapp.com/getScores/`, {})
-      .pipe(
-        map((response) => {
-          this.scores = response;
-          return response;
-        })
-      );
+    return this.http.get<Score[]>(`${environment.baseURL}/getScores/`, {}).pipe(
+      map((response) => {
+        this.scores = response;
+        return response;
+      })
+    );
   }
 
   updateHighscores(): Observable<Score[]> {
@@ -32,10 +31,7 @@ export class ScoresService {
       score: currentUser.score,
     };
     return this.http
-      .put<Score[]>(
-        `https://mean-space-invaders.herokuapp.com/setScores/`,
-        params
-      )
+      .put<Score[]>(`${environment.baseURL}/setScores/`, params)
       .pipe(
         map((response) => {
           this.scores = response;

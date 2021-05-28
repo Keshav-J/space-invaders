@@ -6,6 +6,7 @@ import {
   ViewChild,
 } from '@angular/core';
 import { Router } from '@angular/router';
+import { take } from 'rxjs/operators';
 import { Bullet } from 'src/app/core/models/bullet';
 import { Player } from 'src/app/core/models/player';
 import { Ufo } from 'src/app/core/models/ufo';
@@ -42,6 +43,8 @@ export class GameComponent implements OnInit {
   life = 3;
   level = -1;
 
+  isGameOver = false;
+
   constructor(private scoresService: ScoresService, private router: Router) {}
 
   ngOnInit(): void {
@@ -55,7 +58,7 @@ export class GameComponent implements OnInit {
     this.animate();
 
     if (this.scoresService.getScores().length === 0) {
-      this.scoresService.getHighScores();
+      this.scoresService.getHighScores().pipe(take(1)).subscribe();
     }
   }
 
@@ -98,6 +101,8 @@ export class GameComponent implements OnInit {
       this.startNewLife();
       return;
     }
+
+    this.isGameOver = true;
 
     if (this.scoresService.checkHighScore(this.score)) {
       this.scoresService.setIsNewHighScore(true);
@@ -206,7 +211,9 @@ export class GameComponent implements OnInit {
       this.newUfo();
     }
 
-    requestAnimationFrame(this.animate.bind(this));
+    if (!this.isGameOver) {
+      requestAnimationFrame(this.animate.bind(this));
+    }
   }
 
   moveLeft(): void {

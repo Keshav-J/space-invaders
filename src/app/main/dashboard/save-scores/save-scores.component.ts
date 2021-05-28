@@ -22,7 +22,6 @@ export class SaveScoresComponent implements OnInit {
 
   ngOnInit() {
     const user: User = this.userService.getUser();
-    this.scoresService.getHighScores().pipe(take(1)).subscribe();
     this.form = new FormGroup({
       name: new FormControl(user.name, Validators.required),
       score: new FormControl(user.score, Validators.required),
