@@ -22,15 +22,10 @@ export class SaveScoresComponent implements OnInit {
   ngOnInit() {
     this.user = this.userService.getUser();
     this.scoresService.getHighScores().pipe(take(1)).subscribe();
-    if (!this.scoresService.getIsNewHighScore()) {
-      alert('You have to play the game to save your score...!');
-      this.router.navigate(['highscores']);
-    }
   }
 
   submit() {
     if (this.user.name) {
-      this.router.navigate(['highscores']);
       this.userService.setUserName(this.user.name);
       this.scoresService
         .updateHighscores()
