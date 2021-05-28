@@ -4,10 +4,10 @@ import { CommonModule } from '@angular/common';
 import { DashboardRoutingModule } from './dashboard-routing.module';
 import { HighscoresComponent } from './highscores/highscores.component';
 import { SaveScoresComponent } from './save-scores/save-scores.component';
-import { FormsModule } from '@angular/forms';
+import { ReactiveFormsModule } from '@angular/forms';
 
 @NgModule({
   declarations: [HighscoresComponent, SaveScoresComponent],
-  imports: [CommonModule, DashboardRoutingModule, FormsModule],
+  imports: [CommonModule, DashboardRoutingModule, ReactiveFormsModule],
 })
 export class DashboardModule {}

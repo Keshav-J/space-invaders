@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { take } from 'rxjs/operators';
 import { User } from 'src/app/core/models/models';
@@ -11,7 +12,7 @@ import { UserService } from 'src/app/core/services/user/user.service';
   styleUrls: ['./save-scores.component.scss'],
 })
 export class SaveScoresComponent implements OnInit {
-  user: User;
+  form: FormGroup;
 
   constructor(
     private router: Router,
@@ -20,20 +21,27 @@ export class SaveScoresComponent implements OnInit {
   ) {}
 
   ngOnInit() {
-    this.user = this.userService.getUser();
+    const user: User = this.userService.getUser();
     this.scoresService.getHighScores().pipe(take(1)).subscribe();
+    this.form = new FormGroup({
+      name: new FormControl(user.name, Validators.required),
+      score: new FormControl(user.score, Validators.required),
+    });
   }
 
   submit() {
-    if (this.user.name) {
-      this.userService.setUserName(this.user.name);
-      this.scoresService
-        .updateHighscores()
-        .pipe(take(1))
-        .subscribe(() => {
-          this.scoresService.setIsNewHighScore(false);
-          this.router.navigate(['highscores']);
-        });
+    this.form.markAllAsTouched();
+    if (!this.form.valid) {
+      return;
     }
+
+    this.userService.setUserName(this.form.controls.name.value);
+    this.scoresService
+      .updateHighscores()
+      .pipe(take(1))
+      .subscribe(() => {
+        this.scoresService.setIsNewHighScore(false);
+        this.router.navigate(['highscores']);
+      });
   }
 }

@@ -1,12 +1,24 @@
 <div class="container text-center">
-  <label> Your Score: {{ user.score }} </label>
-  <br /><br />
-  <input
-    type="text"
-    [(ngModel)]="user.name"
-    placeholder="You Name..."
-    required
-  />
-  <br /><br />
-  <input type="submit" class="play-button" (click)="submit()" value="Save" />
+  <form [formGroup]="form" (ngSubmit)="submit()">
+    <label> Your Score: {{ form.get("score")?.value }} </label>
+    <br /><br />
+    <input
+      type="text"
+      placeholder="You Name..."
+      formControlName="name"
+      required
+    />
+    <label
+      *ngIf="
+        form.controls.name.errors &&
+        form.controls.name.touched &&
+        form.controls.name.invalid
+      "
+    >
+      <br />
+      <span class="error-message">Please enter your name...</span>
+    </label>
+    <br /><br />
+    <input type="submit" class="play-button" value="Save" />
+  </form>
 </div>
