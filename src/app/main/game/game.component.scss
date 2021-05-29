@@ -1,7 +1,9 @@
 #canvas {
   position: absolute;
 }
-#player, #bullet, #ufo {
+#player,
+#bullet,
+#ufo {
   display: none;
 }
 
@@ -38,7 +40,6 @@
 }
 
 .ground {
-  background-image: url('src/assets/game/moving_stars.gif');
   position: absolute;
   height: 40px;
   width: 100vw;

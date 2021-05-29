@@ -5,29 +5,34 @@ import { FormsModule } from '@angular/forms';
 import { AppRoutingModule } from './app-routing.module';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { MatDividerModule } from '@angular/material/divider';
-import { HttpClientModule } from '@angular/common/http';
+import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 
 import { AppComponent } from './app.component';
-import { GameComponent } from './game/game.component';
-import { HighscoresComponent } from './highscores/highscores.component';
-import { SaveScoreComponent } from './save-score/save-score.component';
+import { HTTPInterceptor } from './core/interceptors/http/http.interceptor';
+import { ErrorInterceptor } from './core/interceptors/error/error.interceptor';
 
 @NgModule({
-  declarations: [
-    AppComponent,
-    GameComponent,
-    HighscoresComponent,
-    SaveScoreComponent
-  ],
+  declarations: [AppComponent],
   imports: [
     BrowserModule,
     AppRoutingModule,
     FormsModule,
     BrowserAnimationsModule,
     MatDividerModule,
-    HttpClientModule
+    HttpClientModule,
   ],
-  providers: [],
-  bootstrap: [AppComponent]
+  providers: [
+    {
+      provide: HTTP_INTERCEPTORS,
+      useClass: HTTPInterceptor,
+      multi: true
+    },
+    {
+      provide: HTTP_INTERCEPTORS,
+      useClass: ErrorInterceptor,
+      multi: true
+    }
+  ],
+  bootstrap: [AppComponent],
 })
-export class AppModule { }
+export class AppModule {}

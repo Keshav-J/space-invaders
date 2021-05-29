@@ -19,6 +19,11 @@
     "build:server:prod": "webpack --config webpack.server.config.js --progress --colors",
     "build:server:serverless": "webpack --config webpack.server.config.js --progress --colors"
   },
+  "husky": {
+    "hooks": {
+      "pre-commit": "ng lint"
+    }
+  },
   "private": true,
   "dependencies": {
     "@angular/animations": "^10.2.4",
@@ -47,6 +52,7 @@
     "@types/jasminewd2": "~2.0.3",
     "@types/node": "^12.19.14",
     "codelyzer": "^5.1.2",
+    "husky": "^4.2.3",
     "jasmine-core": "~3.5.0",
     "jasmine-spec-reporter": "~5.0.0",
     "karma": "~5.0.0",
