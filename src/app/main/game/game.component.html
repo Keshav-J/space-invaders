@@ -12,24 +12,9 @@
     <span class="level"> LEVEL {{ level + 1 }} </span>
 
     <div class="life-dock">
-      <img
-        class="life"
-        *ngIf="life >= 1"
-        src="assets/game/shooter.png"
-        alt="shooter"
-      />
-      <img
-        class="life"
-        *ngIf="life >= 2"
-        src="assets/game/shooter.png"
-        alt="shooter"
-      />
-      <img
-        class="life"
-        *ngIf="life >= 3"
-        src="assets/game/shooter.png"
-        alt="shooter"
-      />
+      <img class="life" *ngIf="life >= 1" src="assets/game/shooter.png" alt="shooter" />
+      <img class="life" *ngIf="life >= 2" src="assets/game/shooter.png" alt="shooter" />
+      <img class="life" *ngIf="life >= 3" src="assets/game/shooter.png" alt="shooter" />
     </div>
 
     <span class="high-score"> SCORE {{ score | number: "5.0-0" }} </span>

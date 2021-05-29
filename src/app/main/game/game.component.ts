@@ -1,15 +1,10 @@
-import {
-  Component,
-  ElementRef,
-  HostListener,
-  OnDestroy,
-  OnInit,
-  ViewChild,
-} from '@angular/core';
+import { Component, ElementRef, HostListener, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
 import { take } from 'rxjs/operators';
+import { DGameControls, DGameDifficulty, DGameLevel, DGameLife, DGameScore, DGameSprintSpeed } from 'src/app/core/constants/defaults';
 import { ROUTES } from 'src/app/core/constants/urlconstants';
 import { Bullet } from 'src/app/core/models/bullet';
+import { IGameControls } from 'src/app/core/models/models';
 import { Player } from 'src/app/core/models/player';
 import { Ufo } from 'src/app/core/models/ufo';
 import { ScoresService } from 'src/app/core/services/scores/scores.service';
@@ -30,24 +25,25 @@ export class GameComponent implements OnInit, OnDestroy {
 
   private canvasCounter: number;
 
-  private difficulty = 2;
-  private sprintSpeed = 2.5;
-  private controls = {
-    left: false,
-    up: false,
-    right: false,
-    down: false,
-    shoot: false,
-    sprint: 1,
-  };
+  private difficulty: number;
+  private sprintSpeed: number;
+  private controls: IGameControls;
 
-  score = 0;
-  life = 3;
-  level = -1;
+  score: number;
+  life: number;
+  level: number;
 
-  isDestroyed = false;
+  isDestroyed: boolean;
 
-  constructor(private scoresService: ScoresService, private router: Router) {}
+  constructor(private scoresService: ScoresService, private router: Router) {
+    this.difficulty = DGameDifficulty;
+    this.sprintSpeed = DGameSprintSpeed;
+    this.controls = DGameControls;
+    this.score = DGameScore;
+    this.life = DGameLife;
+    this.level = DGameLevel;
+    this.isDestroyed = false;
+  }
 
   ngOnInit(): void {
     this.canvas.nativeElement.height = window.innerHeight;

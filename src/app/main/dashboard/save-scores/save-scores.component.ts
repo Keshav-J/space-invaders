@@ -40,7 +40,6 @@ export class SaveScoresComponent implements OnInit {
       .updateHighscores()
       .pipe(take(1))
       .subscribe(() => {
-        this.scoresService.setIsNewHighScore(false);
         this.router.navigate([ROUTES.HIGHSCORES]);
       });
   }

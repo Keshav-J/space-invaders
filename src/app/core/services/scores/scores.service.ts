@@ -39,6 +39,7 @@ export class ScoresService {
       .pipe(
         map((response) => {
           this.scores = response;
+          this.setIsNewHighScore(false);
           this.userService.setUserScore(0);
           return response;
         })
@@ -47,10 +48,7 @@ export class ScoresService {
 
   checkHighScore(score: number): boolean {
     this.userService.setUserScore(score);
-    if (
-      this.scores.length < 10 ||
-      score >= this.scores[this.scores.length - 1].score
-    ) {
+    if (this.scores.length < 10 || score >= this.scores[this.scores.length - 1].score) {
       return true;
     }
     return false;
@@ -67,4 +65,5 @@ export class ScoresService {
   setIsNewHighScore(state: boolean): void {
     this.isNewHighScore = state;
   }
+
 }
