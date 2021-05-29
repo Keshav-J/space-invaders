@@ -21,13 +21,8 @@
   },
   "husky": {
     "hooks": {
-      "pre-commit": "lint-staged"
+      "pre-commit": "ng lint"
     }
-  },
-  "lint-staged": {
-    "*.ts": [
-      "ng lint"
-    ]
   },
   "private": true,
   "dependencies": {
@@ -65,7 +60,6 @@
     "karma-coverage-istanbul-reporter": "~3.0.2",
     "karma-jasmine": "~4.0.0",
     "karma-jasmine-html-reporter": "^1.5.0",
-    "lint-staged": "^11.0.0",
     "opencollective": "^1.0.3",
     "protractor": "~7.0.0",
     "ts-loader": "^6.2.1",
