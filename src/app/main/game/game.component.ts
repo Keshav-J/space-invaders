@@ -60,13 +60,20 @@ export class GameComponent implements OnInit, OnDestroy {
     }
   }
 
-  startNewGame() {
+  /**
+   * Start a new Game
+   */
+  startNewGame(): void {
     this.initDifficulty();
     this.startNewLife();
     this.life = 3;
   }
 
-  startNewLife() {
+  /**
+   * Start a new life.
+   * Called when starting new game or Player get hit by UFO
+   */
+  startNewLife(): void {
     this.player = new Player(
       20,
       30,
@@ -78,19 +85,31 @@ export class GameComponent implements OnInit, OnDestroy {
     this.ufoList = [];
   }
 
+  /**
+   * Create and add new UFO into the Canvas
+   */
   newUfo(): void {
     this.ufoList.push(
       new Ufo(30, 40, this.difficulty * this.level, this.difficulty)
     );
   }
 
+  /**
+   * Create and add new Bullet into the screen based on Player position
+   */
   newBullet(): void {
     this.bulletList.push(
       new Bullet(10, 2, this.player.x + 14, this.player.y, this.difficulty * 4)
     );
   }
 
-  dead() {
+  /**
+   * Reset list of bullets, UFOs, update life.
+   * When life becomes 0,
+   *   If score gets into leaderboard, navigate to SaveScores page.
+   *   Else navigate to Highscores page
+   */
+  dead(): void {
     this.bulletList = [];
     this.ufoList = [];
     this.life--;
@@ -108,17 +127,32 @@ export class GameComponent implements OnInit, OnDestroy {
     }
   }
 
+  /**
+   * Initialize difficulty of the game from User input
+   */
   initDifficulty() {
-    const nums = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10'];
-    const x = prompt('Enter difficulty (1-10): ', '2');
-    if (nums.includes(x)) {
-      this.difficulty = parseInt(x, 10);
+    const difficultyList = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10'];
+    const selectedDifficulty = prompt('Enter difficulty (1-10): ', '2');
+    if (difficultyList.includes(selectedDifficulty)) {
+      this.difficulty = parseInt(selectedDifficulty, 10);
     } else {
       this.difficulty = 2;
     }
   }
 
-  isCollided(aT, aB, aL, aR, bT, bB, bL, bR) {
+  /**
+   * Check if two objects collide using their coordinates (pixels)
+   * @param aT Top pixel of Object A
+   * @param aB Bottom Pixel of Object A
+   * @param aL Left Pixel of Object A
+   * @param aR Right Pixel of Object A
+   * @param bT Top pixel of Object B
+   * @param bB Bottom Pixel of Object B
+   * @param bL Left Pixel of Object B
+   * @param bR Right Pixel of Object B
+   * @returns True, if the two objects are colliding
+   */
+  isCollided(aT: number, aB: number, aL: number, aR: number, bT: number, bB: number, bL: number, bR: number) {
     if (
       (aT <= bT &&
         bT <= aB &&
@@ -132,6 +166,9 @@ export class GameComponent implements OnInit, OnDestroy {
     return false;
   }
 
+  /**
+   * Clear the HTML Canvas
+   */
   clear(): void {
     this.context.clearRect(
       0,
@@ -141,10 +178,14 @@ export class GameComponent implements OnInit, OnDestroy {
     );
   }
 
+  /**
+   * Animate method that Renders the HTML Canvas contents
+   */
   animate() {
     this.clear();
     this.canvasCounter++;
 
+    // Check if there's a level update
     if (Math.floor(this.score / 100) > this.level) {
       this.level++;
       document.getElementById('level-banner').style.opacity = '1';
@@ -152,9 +193,13 @@ export class GameComponent implements OnInit, OnDestroy {
         document.getElementById('level-banner').style.opacity = '0';
       }, 1500);
     }
+
+    // Update the player
     this.player.update(this.context);
 
+    // Update each UFO
     this.ufoList.forEach((ufo, i) => {
+      // Check if the UFO is hit by the Player
       if (
         this.isCollided(
           ufo.y,
@@ -175,6 +220,7 @@ export class GameComponent implements OnInit, OnDestroy {
       }
     });
 
+    // Check if the Bullet hits any of the UFOs
     this.bulletList.forEach((bullet, i) => {
       this.ufoList.forEach((ufo, j) => {
         if (
@@ -196,6 +242,7 @@ export class GameComponent implements OnInit, OnDestroy {
         }
       });
 
+      // Update the bullet if bullet is still in the screen
       if (0 < bullet.y + bullet.height) {
         bullet.update(this.context);
       } else {
@@ -203,10 +250,12 @@ export class GameComponent implements OnInit, OnDestroy {
       }
     });
 
+    // Launch new UFOs into the screen periodically
     if (this.canvasCounter % (100 / this.difficulty) === 0) {
       this.newUfo();
     }
 
+    // Stop rendering when component is destroyed
     if (!this.isDestroyed) {
       requestAnimationFrame(this.animate.bind(this));
     }

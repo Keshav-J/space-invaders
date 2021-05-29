@@ -30,6 +30,10 @@ input {
   border: 1px solid #00fc00;
   padding: 10px 20px 10px 20px;
   cursor: pointer;
+  
+  &:disabled {
+    cursor: not-allowed;
+  }
 }
 
 .error-message {

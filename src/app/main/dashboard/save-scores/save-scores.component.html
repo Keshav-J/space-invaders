@@ -8,6 +8,6 @@
       <span class="error-message">Please enter your name...</span>
     </label>
     <br><br>
-    <input type="submit" class="play-button" value="Save" />
+    <button type="submit" [disabled]="form.invalid" class="play-button">Save</button>
   </form>
 </div>

@@ -9,6 +9,7 @@ export class AppComponent implements OnInit {
   constructor(private userService: UserService) {}
 
   ngOnInit(): void {
+    // Fetch User details from localStorage on init
     this.userService.setUserFromLocalStorage();
   }
 }

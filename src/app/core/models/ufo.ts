@@ -17,6 +17,10 @@ export class Ufo {
     this.ref = document.getElementById('ufo') as HTMLImageElement;
   }
 
+  /**
+   * Draw UFO in the HTML Canvas
+   * @param context Context of the HTML Canvas
+   */
   draw(context: CanvasRenderingContext2D): void {
     if (!this.ref) {
       return;
@@ -24,9 +28,14 @@ export class Ufo {
     context.drawImage(this.ref, this.x, this.y, this.width, this.height);
   }
 
+  /**
+   * Update the position of the UFO
+   * @param context Context of the HTML Canvas
+   */
   update(context: CanvasRenderingContext2D): void {
     this.draw(context);
 
+    // Reverse the direction of the UFO when hitting the horizontal ends
     if (this.x < 0 || window.innerWidth < this.x + this.width + this.dx) {
       this.dx = -this.dx;
     }

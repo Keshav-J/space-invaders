@@ -25,13 +25,22 @@ export class Player {
     this.ref = document.getElementById('player') as HTMLImageElement;
   }
 
+  /**
+   * Draw Player in the HTML Canvas
+   * @param context Context of the HTML Canvas
+   */
   draw(context: CanvasRenderingContext2D): void {
     context.drawImage(this.ref, this.x, this.y, this.width, this.height);
   }
 
+  /**
+   * Update the position of the Player
+   * @param context Context of the HTML Canvas
+   */
   update(context: CanvasRenderingContext2D): void {
     this.draw(context);
 
+    // Check if Player goes out of page and move the Player to the other end
     if (this.x + this.width / 2 < 0) {
       this.x = window.innerWidth - this.width / 2;
     } else if (window.innerWidth < this.x + this.width / 2) {

@@ -21,7 +21,8 @@ export class SaveScoresComponent implements OnInit {
     private scoresService: ScoresService
   ) {}
 
-  ngOnInit() {
+  ngOnInit(): void {
+    // Get the User details
     const user: IUser = this.userService.getUser();
     this.form = new FormGroup({
       name: new FormControl(user.name, Validators.required),
@@ -29,17 +30,22 @@ export class SaveScoresComponent implements OnInit {
     });
   }
 
-  submit() {
+  /**
+   * Update Highscores with the name and score
+   */
+  submit(): void {
     this.form.markAllAsTouched();
     if (!this.form.valid) {
       return;
     }
 
+    // Set the name for User
     this.userService.setUserName(this.form.controls.name.value);
     this.scoresService
       .updateHighscores()
       .pipe(take(1))
       .subscribe(() => {
+        // Navigate to Highscores after saving
         this.router.navigate([ROUTES.HIGHSCORES]);
       });
   }

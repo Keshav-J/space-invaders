@@ -16,6 +16,7 @@ export class SaveScoreGuard implements CanActivate {
   ): Observable<boolean | UrlTree> | Promise<boolean | UrlTree> | boolean | UrlTree {
     const isNewHighScore = this.scoresService.getIsNewHighScore();
 
+    // If application is not in a state to save score, redirect to highscores page
     if (!isNewHighScore) {
       return this.router.createUrlTree([ROUTES.HIGHSCORES]);
     }

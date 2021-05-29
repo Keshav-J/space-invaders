@@ -17,16 +17,20 @@ export class HighscoresComponent implements OnInit {
 
   constructor(private scoresService: ScoresService) {}
 
-  ngOnInit() {
+  ngOnInit(): void {
+    // Get the local Highscores list
     this.scores = this.scoresService.getScores();
-    this.scoresService
-      .getHighScores()
+    // Get new Highscores list from Backend API
+    this.scoresService.getHighScores()
       .pipe(take(1))
       .subscribe((scores: IScore[]) => {
         this.scores = scores;
       });
   }
 
+  /**
+   * Toggle between Highscores and Instructions
+   */
   toggle(): void {
     this.isInstructions = !this.isInstructions;
   }

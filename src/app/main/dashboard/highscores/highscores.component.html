@@ -1,4 +1,5 @@
 <div class="container text-center">
+  <!-- Table with the list of Highscores -->
   <div class="highscores" *ngIf="!isInstructions">
     <h1>HIGHSCORES</h1>
     <table class="table">
@@ -20,6 +21,7 @@
     </table>
   </div>
 
+  <!-- List of Instructions -->
   <div class="instructions" *ngIf="isInstructions">
     <h1>INSTRUCTIONS</h1>
     <ul class="instruction-list">
@@ -60,9 +62,10 @@
       </li>
     </ul>
   </div>
-  <button class="play-button" [routerLink]="[gameRoute]" routerLinkActive="router-link-active">
-    Play
-  </button>
+
+  <!-- Button to navigate to the Game page -->
+  <button class="play-button" [routerLink]="[gameRoute]" routerLinkActive="router-link-active"> Play </button>
+  <!-- Button to toggle between Highscores and Instructions -->
   <button class="play-button" (click)="toggle()">
     {{ isInstructions ? "Highscores" : "Instructions" }}
   </button>
