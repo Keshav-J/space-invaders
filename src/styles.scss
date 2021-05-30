@@ -19,7 +19,7 @@ body {
   -ms-user-select: none; /* IE 10 and IE 11 */
   user-select: none; /* Standard syntax */
 }
-input:focus, textarea:focus, select:focus{
+input:focus, textarea:focus, select:focus, button:focus {
   outline: none;
 }
 

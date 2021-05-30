@@ -16,12 +16,16 @@ export class HighscoresComponent implements OnInit {
   isInstructions: boolean;
   isMobile: boolean;
   gameRoute: string;
+  isNewUser: boolean;
 
   constructor(private scoresService: ScoresService) {
     this.scores = DScores;
-    this.isInstructions = false;
+    this.isInstructions = !CommonHelpers.isOldUser();
     this.gameRoute = ROUTES.GAME;
     this.isMobile = CommonHelpers.isMobileDevice();
+    if (this.isInstructions) {
+      CommonHelpers.setOldUser();
+    }
   }
 
   ngOnInit(): void {

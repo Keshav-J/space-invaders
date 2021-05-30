@@ -1,4 +1,9 @@
 export class CommonHelpers {
+
+  /**
+   * Check if the current device is a Mobile device
+   * @returns True, if the device is Mobile
+   */
   public static isMobileDevice(): boolean {
     const toMatch = [
       /Android/i,
@@ -36,6 +41,24 @@ export class CommonHelpers {
         bB <= aB &&
         ((aL <= bL && bL <= aR) || (aL <= bR && bR <= aR)))
     ) {
+      return true;
+    }
+    return false;
+  }
+
+  /**
+   * Set user is old user in localStorage
+   */
+  public static setOldUser(): void {
+    localStorage.setItem('old_user', 'true');
+  }
+
+  /**
+   * Check if user is a returning user
+   * @returns True, if the User is a returning user
+   */
+  public static isOldUser(): boolean {
+    if (localStorage.getItem('old_user')) {
       return true;
     }
     return false;
