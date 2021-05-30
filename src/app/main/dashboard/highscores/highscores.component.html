@@ -40,7 +40,7 @@
           active bullets at a time.
         </li>
         <br />
-        <li>
+        <li *ngIf="!isMobile">
           Controls:
           <br />
           <br />
@@ -56,12 +56,22 @@
           <br />
           Boost: &nbsp; <span>shift</span>
         </li>
+        <li *ngIf="isMobile">
+          Controls:
+          <br />
+          <br />
+          <ul>
+            <li>Click and drag your Space ship to move.</li>
+            <li>The Space ship will fire at 2 shots per second.</li>
+          </ul>
+          <br />
+        </li>
       </ul>
     </div>
   
     <div class="row justify-center mb-20px">
       <!-- Button to navigate to the Game page -->
-      <button class="btn" [routerLink]="[gameRoute]" routerLinkActive="router-link-active"> Play </button>
+      <button class="btn" [routerLink]="['/', gameRoute]" routerLinkActive="router-link-active"> Play </button>
       <!-- Button to toggle between Highscores and Instructions -->
       <button class="btn" (click)="toggle()">
         {{ isInstructions ? "Highscores" : "Instructions" }}

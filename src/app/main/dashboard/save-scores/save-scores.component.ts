@@ -46,7 +46,7 @@ export class SaveScoresComponent implements OnInit {
       .pipe(take(1))
       .subscribe(() => {
         // Navigate to Highscores after saving
-        this.router.navigate([ROUTES.HIGHSCORES]);
+        this.router.navigate(['/', ROUTES.HIGHSCORES]);
       });
   }
 }

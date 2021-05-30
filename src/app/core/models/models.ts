@@ -17,3 +17,13 @@ export interface IGameControls {
   shoot: boolean;
   sprint: number;
 }
+
+export interface IObject {
+  height: number;
+  width: number;
+}
+
+export interface IMousePointer {
+  x: number;
+  y: number;
+}
