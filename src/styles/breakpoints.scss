@@ -1,0 +1,13 @@
+$sm: 480px;
+$md: 768px;
+$lg: 1024px;
+$xl: 1200px;
+
+$totalSpans: 12;
+$breakpoints: (
+  xs: (0px, $sm - 1),
+  sm: ($sm, $md - 1),
+  md: ($md, $lg - 1),
+  lg: ($lg, $xl - 1),
+  xl: ($xl, 9999px),
+);

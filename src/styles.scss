@@ -1,3 +1,7 @@
+@import '/src/styles/breakpoints.scss';
+@import '/src/styles/classes.scss';
+@import '/src/styles/variables.scss';
+
 /* You can add global styles to this file, and also import other style files */
 
 html,
@@ -8,4 +12,61 @@ body {
   margin: 0;
   font-family: Roboto, "Helvetica Neue", sans-serif;
   background-image: url("assets/game/moving_stars.gif");
+}
+* {
+  color: $text-default;
+}
+input:focus, textarea:focus, select:focus{
+  outline: none;
+}
+
+// Build span classes for all breakpoints
+@each $screen,$size in $breakpoints {
+  @media only screen and (min-width: #{nth($size, 1)}) and (max-width: #{nth($size, 2)}) {
+    @for $span from 1 through $totalSpans {
+      .col-#{$screen}-#{$span} {
+        width: (($span * 100) / $totalSpans) * 1% !important;
+      }
+    }
+  }
+}
+
+// Build all span classes
+@for $span from 1 through $totalSpans {
+  .col-#{$span} {
+    width: (($span * 100) / $totalSpans) * 1%;
+  }
+}
+
+.row {
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+}
+
+.wrapper-screen {
+  position: absolute;
+  height: 100%;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.btn {
+  background-color: transparent;
+  border: 1px solid $border-default;
+  padding: 10px 20px;
+  margin: 10px;
+  cursor: pointer;
+  &:disabled {
+    cursor: not-allowed;
+  }
+}
+
+.inp {
+  background-color: transparent;
+  border: 1px solid $border-default;
+  margin: unset;
+  padding: 10px;
 }
