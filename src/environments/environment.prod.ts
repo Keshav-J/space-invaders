@@ -1,4 +1,4 @@
 export const environment = {
   production: true,
-  baseURL: 'https://mean-space-invaders.herokuapp.com',
+  baseURL: 'https://space-invaders-backend.herokuapp.com',
 };
