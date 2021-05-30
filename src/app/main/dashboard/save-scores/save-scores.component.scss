@@ -1,42 +1,14 @@
-* {
-  color: #00fc00;
-}
+@import '/src/styles/breakpoints.scss';
+@import '/src/styles/variables.scss';
 
 .container {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  width: 400px;
-  padding: 30px 20px 30px 20px;
+  width: 350px;
+  padding: 30px 0px;
   font-size: 18px;
-  border: 1px solid #00fc00;
-}
+  border: 1px solid $border-default;
 
-.text-center {
-  text-align: center;
-}
-
-input {
-  background-color: transparent;
-  color: #00fc00;
-  margin: unset;
-  padding: 10px;
-  border: 1px solid #00fc00;
-}
-
-.play-button {
-  background-color: transparent;
-  border: 1px solid #00fc00;
-  padding: 10px 20px 10px 20px;
-  cursor: pointer;
-  
-  &:disabled {
-    cursor: not-allowed;
+  .error-message {
+    font-size: small;
+    color: $text-danger;
   }
-}
-
-.error-message {
-  font-size: small;
-  color: red;
 }

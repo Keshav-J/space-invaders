@@ -1,46 +1,27 @@
-* {
-  color: #00fc00;
-}
+@import '/src/styles/breakpoints.scss';
+@import '/src/styles/variables.scss';
 
 .container {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  padding: 30px 20px;
+  max-height: 100%;
+  overflow: scroll;
+  margin: 30px 20px;
   font-size: 1rem;
-  border: 1px solid #00fc00;
-}
+  @media screen and (min-width: $sm) {
+    border: 1px solid $border-default;
+  }
 
-.text-center {
-  text-align: center;
-}
+  .highscores .table {
+    width: 100%;
+  
+    tr th {
+      padding: 10px;
+    }
+  }
 
-.table {
-  width: 100%;
-  border: none;
-}
-.table tr th {
-  padding: 10px;
-}
-
-.play-button {
-  background-color: transparent;
-  border: 1px solid #00fc00;
-  padding: 10px 20px;
-  margin: 10px;
-  cursor: pointer;
-}
-
-.instructions ul.instruction-list {
-  padding-left: 20px;
-  padding-right: 10px;
-  text-align: left;
-  left: 100px;
-}
-
-.controls {
-  position: absolute;
-  text-align: left;
-  left: 60px;
+  .instructions ul.instruction-list {
+    padding-left: 20px;
+    padding-right: 10px;
+    text-align: left;
+    left: 100px;
+  }
 }
