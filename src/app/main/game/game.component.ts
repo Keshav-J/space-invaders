@@ -1,14 +1,14 @@
 import { Component, ElementRef, HostListener, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
 import { take } from 'rxjs/operators';
-import { DGameControls, DGameDifficulty, DGameLevel, DGameLife, DGameScore, DGameSprintSpeed } from 'src/app/core/constants/defaults';
+import { DBullet, DGameControls, DGameDifficulty, DGameLevel, DGameLife, DGameScore, DGameSprintSpeed, DMousePointer, DPlayer, DUfo } from 'src/app/core/constants/defaults';
 import { ROUTES } from 'src/app/core/constants/urlconstants';
+import { CommonHelpers } from 'src/app/core/helpers/common.helper';
 import { Bullet } from 'src/app/core/models/bullet';
-import { IGameControls } from 'src/app/core/models/models';
+import { IGameControls, IMousePointer } from 'src/app/core/models/models';
 import { Player } from 'src/app/core/models/player';
 import { Ufo } from 'src/app/core/models/ufo';
 import { ScoresService } from 'src/app/core/services/scores/scores.service';
-
 @Component({
   selector: 'app-game',
   templateUrl: './game.component.html',
@@ -28,21 +28,27 @@ export class GameComponent implements OnInit, OnDestroy {
   private difficulty: number;
   private sprintSpeed: number;
   private controls: IGameControls;
+  private mousePosition: IMousePointer;
 
   score: number;
   life: number;
   level: number;
 
-  isDestroyed: boolean;
+  private isDestroyed: boolean;
+  private isClicked: boolean;
+  private isMobile: boolean;
 
   constructor(private scoresService: ScoresService, private router: Router) {
     this.difficulty = DGameDifficulty;
     this.sprintSpeed = DGameSprintSpeed;
     this.controls = DGameControls;
+    this.mousePosition = DMousePointer;
     this.score = DGameScore;
     this.life = DGameLife;
     this.level = DGameLevel;
     this.isDestroyed = false;
+    this.isClicked = false;
+    this.isMobile = CommonHelpers.isMobileDevice();
   }
 
   ngOnInit(): void {
@@ -75,8 +81,8 @@ export class GameComponent implements OnInit, OnDestroy {
    */
   startNewLife(): void {
     this.player = new Player(
-      20,
-      30,
+      DPlayer.height,
+      DPlayer.width,
       window.innerWidth / 2 - 15,
       window.innerHeight - 70,
       this.difficulty
@@ -90,7 +96,7 @@ export class GameComponent implements OnInit, OnDestroy {
    */
   newUfo(): void {
     this.ufoList.push(
-      new Ufo(30, 40, this.difficulty * this.level, this.difficulty)
+      new Ufo(DUfo.height, DUfo.width, this.difficulty * this.level, this.difficulty)
     );
   }
 
@@ -99,7 +105,7 @@ export class GameComponent implements OnInit, OnDestroy {
    */
   newBullet(): void {
     this.bulletList.push(
-      new Bullet(10, 2, this.player.x + 14, this.player.y, this.difficulty * 4)
+      new Bullet(DBullet.height, DBullet.width, this.player.x + 14, this.player.y, this.difficulty * 4)
     );
   }
 
@@ -121,9 +127,9 @@ export class GameComponent implements OnInit, OnDestroy {
 
     if (this.scoresService.checkHighScore(this.score)) {
       this.scoresService.setIsNewHighScore(true);
-      this.router.navigate([ROUTES.SAVE_SCORES]);
+      this.router.navigate(['/', ROUTES.SAVE_SCORES]);
     } else {
-      this.router.navigate([ROUTES.HIGHSCORES]);
+      this.router.navigate(['/', ROUTES.HIGHSCORES]);
     }
   }
 
@@ -138,32 +144,6 @@ export class GameComponent implements OnInit, OnDestroy {
     } else {
       this.difficulty = 2;
     }
-  }
-
-  /**
-   * Check if two objects collide using their coordinates (pixels)
-   * @param aT Top pixel of Object A
-   * @param aB Bottom Pixel of Object A
-   * @param aL Left Pixel of Object A
-   * @param aR Right Pixel of Object A
-   * @param bT Top pixel of Object B
-   * @param bB Bottom Pixel of Object B
-   * @param bL Left Pixel of Object B
-   * @param bR Right Pixel of Object B
-   * @returns True, if the two objects are colliding
-   */
-  isCollided(aT: number, aB: number, aL: number, aR: number, bT: number, bB: number, bL: number, bR: number) {
-    if (
-      (aT <= bT &&
-        bT <= aB &&
-        ((aL <= bL && bL <= aR) || (aL <= bR && bR <= aR))) ||
-      (aT <= bB &&
-        bB <= aB &&
-        ((aL <= bL && bL <= aR) || (aL <= bR && bR <= aR)))
-    ) {
-      return true;
-    }
-    return false;
   }
 
   /**
@@ -194,14 +174,27 @@ export class GameComponent implements OnInit, OnDestroy {
       }, 1500);
     }
 
+    // Shoot new Bullet when Mouse is used
+    if (this.isClicked && this.isMobile && this.canvasCounter % 30 === 0) {
+      if (this.bulletList.length < 5) {
+        this.newBullet();
+      }
+      this.controls.shoot = true;
+    }
+
     // Update the player
+    if (this.isClicked) {
+      const maxSpeed = this.player.speed * this.sprintSpeed;
+      this.player.dx = (this.mousePosition.x - (this.player.x + DPlayer.width / 2)) / maxSpeed;
+      this.player.dy = (this.mousePosition.y - (this.player.y + DPlayer.height / 2)) / maxSpeed;
+    }
     this.player.update(this.context);
 
     // Update each UFO
     this.ufoList.forEach((ufo, i) => {
       // Check if the UFO is hit by the Player
       if (
-        this.isCollided(
+        CommonHelpers.isCollided(
           ufo.y,
           ufo.y + ufo.height,
           ufo.x,
@@ -224,7 +217,7 @@ export class GameComponent implements OnInit, OnDestroy {
     this.bulletList.forEach((bullet, i) => {
       this.ufoList.forEach((ufo, j) => {
         if (
-          this.isCollided(
+          CommonHelpers.isCollided(
             ufo.y,
             ufo.y + ufo.height,
             ufo.x,
@@ -283,6 +276,9 @@ export class GameComponent implements OnInit, OnDestroy {
 
   @HostListener('document:keydown', ['$event'])
   keyDown(event: KeyboardEvent) {
+    if (this.isClicked) {
+      return;
+    }
     if (event.key === 'ArrowLeft' || event.key === 'a') {
       this.controls.left = true;
       this.moveLeft();
@@ -361,6 +357,54 @@ export class GameComponent implements OnInit, OnDestroy {
         -this.player.speed,
         Math.min(this.player.speed, this.player.dy)
       );
+    }
+  }
+
+  @HostListener('document:mousedown', ['$event'])
+  mouseDown(event: MouseEvent) { this.dragStart(event.clientX, event.clientY); }
+  @HostListener('document:mouseup', ['$event'])
+  mouseUp(event: MouseEvent) { this.dragStop(); }
+  @HostListener('document:mousemove', ['$event'])
+  mouseMove(event: MouseEvent) { this.setMousePosition(event.clientX, event.clientY); }
+
+
+  @HostListener('document:touchstart', ['$event'])
+  touchStart(event: TouchEvent) { this.dragStart(event.touches[0].clientX, event.touches[0].clientY); }
+  @HostListener('document:touchend', ['$event'])
+  touchEnd(event: TouchEvent) { this.dragStop();  }
+  @HostListener('document:touchcancel', ['$event'])
+  touchCancel(event: TouchEvent) { this.dragStop(); }
+  @HostListener('document:touchmove', ['$event'])
+  touchMove(event: TouchEvent) { this.setMousePosition(event.touches[0].clientX, event.touches[0].clientY); }
+
+  dragStart(clientX: number, clientY: number): void {
+    this.isClicked = true;
+    this.controls.left = false;
+    this.controls.up = false;
+    this.controls.right = false;
+    this.controls.down = false;
+    this.setMousePosition(clientX, clientY);
+  }
+
+  dragStop(): void {
+    this.isClicked = false;
+    this.controls.shoot = false;
+    this.resetX();
+    this.resetY();
+  }
+
+  setMousePosition(clientX: number, clientY: number): void {
+    if (this.isClicked) {
+      this.mousePosition.x = clientX;
+      this.mousePosition.y = clientY;
+    }
+  }
+
+  @HostListener('window:orientationchange', ['$event'])
+  deviceOrientation(event: DeviceOrientationEvent) {
+    if (window.innerHeight < window.innerWidth) {
+      alert('device orientation changed. Restarting the game...');
+      location.reload();
     }
   }
 

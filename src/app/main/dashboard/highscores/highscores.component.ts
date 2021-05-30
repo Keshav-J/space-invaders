@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { take } from 'rxjs/operators';
 import { DScores } from 'src/app/core/constants/defaults';
 import { ROUTES } from 'src/app/core/constants/urlconstants';
+import { CommonHelpers } from 'src/app/core/helpers/common.helper';
 import { IScore } from 'src/app/core/models/models';
 import { ScoresService } from 'src/app/core/services/scores/scores.service';
 
@@ -11,11 +12,21 @@ import { ScoresService } from 'src/app/core/services/scores/scores.service';
   styleUrls: ['./highscores.component.scss'],
 })
 export class HighscoresComponent implements OnInit {
-  scores: IScore[] = DScores;
-  isInstructions = false;
-  gameRoute = ROUTES.GAME;
+  scores: IScore[];
+  isInstructions: boolean;
+  isMobile: boolean;
+  gameRoute: string;
+  isNewUser: boolean;
 
-  constructor(private scoresService: ScoresService) {}
+  constructor(private scoresService: ScoresService) {
+    this.scores = DScores;
+    this.isInstructions = !CommonHelpers.isOldUser();
+    this.gameRoute = ROUTES.GAME;
+    this.isMobile = CommonHelpers.isMobileDevice();
+    if (this.isInstructions) {
+      CommonHelpers.setOldUser();
+    }
+  }
 
   ngOnInit(): void {
     // Get the local Highscores list

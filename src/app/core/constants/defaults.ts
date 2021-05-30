@@ -1,4 +1,4 @@
-import { IGameControls, IScore, IUser } from '../models/models';
+import { IGameControls, IMousePointer, IObject, IScore, IUser } from '../models/models';
 
 // Default values for the playing User
 export const DUser: IUser = {
@@ -20,6 +20,23 @@ export const DGameControls: IGameControls = {
   shoot: false,
   sprint: 1,
 };
+export const DMousePointer: IMousePointer = {
+  x: 0,
+  y: 0,
+};
 export const DGameScore = 0;
 export const DGameLife = 0;
 export const DGameLevel = -1;
+
+export const DPlayer: IObject = {
+  height: 20,
+  width: 30
+};
+export const DUfo: IObject = {
+  height: 30,
+  width: 40
+};
+export const DBullet: IObject = {
+  height: 10,
+  width: 2
+};
