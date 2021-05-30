@@ -9,7 +9,10 @@
         <span class="error-message">Please enter your name...</span>
       </label>
       <br><br>
-      <button type="submit" [disabled]="form.invalid" class="btn">Save</button>
+      <button type="submit" [disabled]="form.invalid" class="btn" style="height: 44px; width: 72.39px;">
+        <span *ngIf="!isLoading">Save</span>
+        <div class="loader" *ngIf="isLoading"></div>
+      </button>
     </form>
   </div>
 </div>

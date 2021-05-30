@@ -14,12 +14,15 @@ import { UserService } from 'src/app/core/services/user/user.service';
 })
 export class SaveScoresComponent implements OnInit {
   form: FormGroup;
+  isLoading: boolean;
 
   constructor(
     private router: Router,
     private userService: UserService,
     private scoresService: ScoresService
-  ) {}
+  ) {
+    this.isLoading = false;
+  }
 
   ngOnInit(): void {
     // Get the User details
@@ -41,12 +44,16 @@ export class SaveScoresComponent implements OnInit {
 
     // Set the name for User
     this.userService.setUserName(this.form.controls.name.value);
-    this.scoresService
-      .updateHighscores()
+    this.isLoading = true;
+    this.scoresService.updateHighscores()
       .pipe(take(1))
       .subscribe(() => {
         // Navigate to Highscores after saving
         this.router.navigate(['/', ROUTES.HIGHSCORES]);
+        this.isLoading = false;
+      },
+      () => {
+        this.isLoading = false;
       });
   }
 }

@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { take } from 'rxjs/operators';
+import { map, take } from 'rxjs/operators';
 import { DScores } from 'src/app/core/constants/defaults';
 import { ROUTES } from 'src/app/core/constants/urlconstants';
 import { CommonHelpers } from 'src/app/core/helpers/common.helper';
@@ -17,12 +17,14 @@ export class HighscoresComponent implements OnInit {
   isMobile: boolean;
   gameRoute: string;
   isNewUser: boolean;
+  isLoading: boolean;
 
   constructor(private scoresService: ScoresService) {
     this.scores = DScores;
     this.isInstructions = !CommonHelpers.isOldUser();
     this.gameRoute = ROUTES.GAME;
     this.isMobile = CommonHelpers.isMobileDevice();
+    this.isLoading = false;
     if (this.isInstructions) {
       CommonHelpers.setOldUser();
     }
@@ -32,10 +34,15 @@ export class HighscoresComponent implements OnInit {
     // Get the local Highscores list
     this.scores = this.scoresService.getScores();
     // Get new Highscores list from Backend API
+    this.isLoading = true;
     this.scoresService.getHighScores()
       .pipe(take(1))
       .subscribe((scores: IScore[]) => {
         this.scores = scores;
+        this.isLoading = false;
+      },
+      () => {
+        this.isLoading = false;
       });
   }
 
