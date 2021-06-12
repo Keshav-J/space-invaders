@@ -7,17 +7,7 @@
     "build": "ng build --prod",
     "test": "ng test",
     "lint": "ng lint",
-    "e2e": "ng e2e",
-    "build:prod:deploy": "npm run build:prod && npm run deploy",
-    "build:browser:prod": "ng build --prod",
-    "build:browser:serverless": "ng build --prod --base-href /",
-    "build:serverless": "npm run build:browser:serverless && npm run build:server:serverless",
-    "build:prod": "npm run build:browser:prod && npm run build:server:prod",
-    "server": "node local.js",
-    "build:serverless:deploy": "npm run build:serverless && npm run deploy",
-    "deploy": "cpy-cli dist/ functions/dist/ && cd functions && npm install && firebase deploy",
-    "build:server:prod": "webpack --config webpack.server.config.js --progress --colors",
-    "build:server:serverless": "webpack --config webpack.server.config.js --progress --colors"
+    "e2e": "ng e2e"
   },
   "husky": {
     "hooks": {
@@ -27,7 +17,6 @@
   "private": true,
   "dependencies": {
     "@angular/animations": "^10.2.4",
-    "@angular/cdk": "^9.2.4",
     "@angular/common": "^10.2.4",
     "@angular/compiler": "^10.2.4",
     "@angular/core": "^10.2.4",
@@ -35,7 +24,6 @@
     "@angular/platform-browser": "^10.2.4",
     "@angular/platform-browser-dynamic": "^10.2.4",
     "@angular/router": "^10.2.4",
-    "@ng-toolkit/serverless": "^8.1.0",
     "cors": "^2.8.5",
     "cpy-cli": "^3.0.0",
     "express": "^4.17.1",
