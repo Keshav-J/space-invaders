@@ -4,7 +4,6 @@ import { FormsModule } from '@angular/forms';
 
 import { AppRoutingModule } from './app-routing.module';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { MatDividerModule } from '@angular/material/divider';
 import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 
 import { AppComponent } from './app.component';
@@ -18,7 +17,6 @@ import { ErrorInterceptor } from './core/interceptors/error/error.interceptor';
     AppRoutingModule,
     FormsModule,
     BrowserAnimationsModule,
-    MatDividerModule,
     HttpClientModule,
   ],
   providers: [

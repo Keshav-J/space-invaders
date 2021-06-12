@@ -45,8 +45,9 @@
   width: 100vw;
   bottom: 0px;
 }
-.mat-divider {
-  border-top-color: #00fc00;
+.divider {
+  border-color: #00fc00;
+  margin: 0;
 }
 .dock > * {
   position: absolute;

@@ -3,22 +3,26 @@
 @import '/src/styles/loader';
 @import '/src/styles/variables';
 
-/* You can add global styles to this file, and also import other style files */
-
 html,
 body {
   height: 100%;
 }
 body {
   margin: 0;
-  font-family: Roboto, "Helvetica Neue", sans-serif;
   background-image: url("assets/game/moving_stars.gif");
+  font: 400 14px/20px Roboto,Helvetica Neue,sans-serif;
+  letter-spacing: normal
 }
 * {
   color: $text-default;
   -webkit-user-select: none; /* Safari */
   -ms-user-select: none; /* IE 10 and IE 11 */
   user-select: none; /* Standard syntax */
+}
+h1 {
+  font: 400 24px/32px Roboto,Helvetica Neue,sans-serif;
+  letter-spacing: normal;
+  margin: 0 0 16px
 }
 input:focus, textarea:focus, select:focus, button:focus {
   outline: none;
